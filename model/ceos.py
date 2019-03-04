@@ -9,11 +9,13 @@ def check_input_dimensions(instance, attribute, value):
     if accentric_factor_not_eq_Tc or accentric_factor_not_eq_Pc or Pc_not_eq_Tc:
         raise ValueError("Inputed values have incompatible dimensions.")
 
+
 def check_bip(instance, attribute, value):
         if value.shape[0] != value.shape[1]:
             raise ValueError("BIP's must be a 2-dim symmetric array.")
         if value.shape[0] != len(instance.Tc):
             raise ValueError("BIP's have incompatible dimension with input data such as critical temperature.")
+
 
 @attr.s
 class CEOS(object):
@@ -21,10 +23,17 @@ class CEOS(object):
     docstring here
         :param object: 
     """
+    z = attr.ib(type=np.ndarray)
     Tc = attr.ib(type=np.ndarray)
     Pc = attr.ib(type=np.ndarray)
     acentric_factor = attr.ib(type=np.ndarray, validator=[check_input_dimensions])
     bip = attr.ib(type=np.ndarray, validator=[check_bip])
+
+    @z.validator
+    def check_overall_composition(self, attribute, value):
+        tol = 1e-5
+        if not 1 - tol <= np.sum(value) <= 1 + tol:
+            raise ValueError('Overall composition must have summation equal 1.')
 
 
     def Tr(self, T):
