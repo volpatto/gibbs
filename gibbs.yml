@@ -13,5 +13,6 @@ dependencies:
     - jupyter_nbextensions_configurator
     - sympy
     - git
+    - pytest
 channels:
     - conda-forge
