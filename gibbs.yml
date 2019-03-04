@@ -1,0 +1,17 @@
+name: gibbs
+dependencies:
+    - python=3
+    - attrs
+    - numpy
+    - scipy
+    - matplotlib
+    - pandas
+    - seaborn
+    - altair
+    - jupyter
+    - jupyter_contrib_nbextensions 
+    - jupyter_nbextensions_configurator
+    - sympy
+    - git
+channels:
+    - conda-forge
