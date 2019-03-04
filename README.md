@@ -1,4 +1,6 @@
-# gibbs: an open source python library for equilibrium calculation based in global minimization of Gibbs free energy
+# gibbs
+
+An open source python library for equilibrium calculation based in global minimization of Gibbs free energy.
 
 ## What you will find here? 
 
