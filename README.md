@@ -7,7 +7,7 @@ An open source python library for equilibrium calculation based in global minimi
 Simply put, a library for calculating equilibrium and related properties, like phase diagrams, by means of 
 formulating the equilibrium as a optimization problem instead of non-linear flash calculations systems.
 
-The main ideas are based in this paper written by [Nichita et al](https://www.sciencedirect.com/science/article/pii/S0098135402001448). However, instead Tunneling method proposed there, here a derivative-free and stocasthic global optimization method named [Differential Evolution](https://link.springer.com/article/10.1023/A:1008202821328) (DE for short) is employed.
+The main ideas are based in this paper written by [Nichita et al](https://www.sciencedirect.com/science/article/pii/S0098135402001448). However, instead Tunneling method proposed there, here a derivative-free and stochastic global optimization method named [Differential Evolution](https://link.springer.com/article/10.1023/A:1008202821328) (DE for short) is employed.
 
 ## So what are the advantages? 
 
