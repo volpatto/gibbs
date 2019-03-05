@@ -14,5 +14,6 @@ dependencies:
     - sympy
     - git
     - pytest
+    - pylint
 channels:
     - conda-forge

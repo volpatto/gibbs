@@ -59,7 +59,7 @@ class PengRobinson76(CEOS):
 
     @property
     def m(self):
-        return 0.37464 + 1.54226 * self.acentric_factor - 0.26992 * self.acentric_factor ** 2.0
+        return 0.37464 + 1.54226 * self.acentric_factor - 0.26992 * self.acentric_factor * self.acentric_factor
 
     def alpha(self, T):
         return (1 + self.m * (1 - np.sqrt(self.Tr(T)))) * (1 + self.m * (1 - np.sqrt(self.Tr(T))))
@@ -70,23 +70,27 @@ class PengRobinson76(CEOS):
     def B_i(self, P, T):
         return self._Omega_b * self.Pr(P) / self.Tr(T)
 
-    def A_mix(self, P, T):
-        raise NotImplementedError('To be implemented.')
+    def A_mix(self, P, T, z):
+        # raise NotImplementedError('To be implemented.')
+        return np.dot(z, np.dot(z, self.A_ij(P, T)))
 
-    def B_mix(self, P, T):
-        raise NotImplementedError('To be implemented.')
+    def B_mix(self, P, T, z):
+        # raise NotImplementedError('To be implemented.')
+        return np.dot(z, self.B_i(P, T))
 
     def A_ij(self, P, T):
         return (1 - self.bip) * np.sqrt(np.outer(self.A_i(P, T), self.A_i(P, T)))
 
 
-
+z = np.array([0.5, 0.5])
 Tcs = np.array([126.1, 190.6])
 Pcs = np.array([33.94E5, 46.04E5])
 omegas = np.array([0.04, 0.011])
-kijs = np.array([[0,0], [0,0]])
+kijs = np.array([[0, 0], [0, 0]])
 
-eos = PengRobinson76(Tc=Tcs, Pc=Pcs, acentric_factor=omegas, bip=kijs)
+eos = PengRobinson76(z=z, Tc=Tcs, Pc=Pcs, acentric_factor=omegas, bip=kijs)
 
-print(eos.m)
+print(eos.A_mix(P=1e6, T=115, z=np.array([0.5, 0.5])))
+print(eos.A_ij(P=1e6, T=115))
+print(eos.B_i(P=1e6, T=115))
 
