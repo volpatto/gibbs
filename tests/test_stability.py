@@ -68,5 +68,5 @@ def test_stochastic_consistency(sample_model):
     T = sample_model.T
     z = sample_model.z
     for run in range(num_of_realizations):
-        x_opt, tpd_opt = stability_test(sample_model, P, T, z)
-        assert x_opt.sum() == pytest.approx(1.0, rel=1e-5)
+        result = stability_test(sample_model, P, T, z)
+        assert result.x.sum() == pytest.approx(1.0, rel=1e-5)
