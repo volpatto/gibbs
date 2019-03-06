@@ -22,3 +22,23 @@ def test_eos_parameters_whitson_ex18(eos_whitson):
     expected_Bis = np.array([0.02701, 0.07308, 0.1922])
     assert eos_whitson.A_i(P=P, T=T) == pytest.approx(expected_Ais, rel=1e-3)
     assert eos_whitson.B_i(P=P, T=T) == pytest.approx(expected_Bis, rel=1e-3)
+
+
+def test_Z_real_root_liquid_whitson_ex18(eos_whitson):
+    P = 3.447e6
+    T = 410.928
+    z = np.array([0.02370, 0.46695, 0.50935])
+    expected_Z_l = 0.1812
+    assert eos_whitson.calculate_Z(P=P, T=T, z=z) == pytest.approx(
+        expected_Z_l, rel=1e-3
+    )
+
+
+def test_Z_real_root_vapor_whitson_ex18(eos_whitson):
+    P = 3.447e6
+    T = 410.928
+    z = np.array([0.58262, 0.41186, 0.00553])
+    expected_Z_v = 0.8785
+    assert eos_whitson.calculate_Z(P=P, T=T, z=z) == pytest.approx(
+        expected_Z_v, rel=1e-3
+    )

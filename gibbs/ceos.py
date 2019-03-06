@@ -106,3 +106,33 @@ class PengRobinson78(CEOS):
 
     def A_ij(self, P, T):
         return (1 - self.bip) * np.sqrt(np.outer(self.A_i(P, T), self.A_i(P, T)))
+
+    def calculate_Z(self, P, T, z):
+        A = self.A_mix(P, T, z)
+        B = self.B_mix(P, T, z)
+        a0 = -(A * B - B ** 2.0 - B ** 3.0)
+        a1 = A - 3 * B ** 2.0 - 2 * B
+        a2 = -(1 - B)
+        a3 = 1
+        coefficients = np.array([a3, a2, a1, a0])
+        Z_roots = np.roots(coefficients)
+        # A threshold is applied in imaginary part, since it can be 
+        # numerically spurious.
+        Z_real_roots = Z_roots.real[np.abs(Z_roots.imag) < 1e-5]
+        return Z_real_roots
+
+
+z = np.array([0.5, 0.42, 0.08])
+omegas = np.array([0.0115, 0.1928, 0.4902])
+Tcs = np.array([190.556, 425.16667, 617.666667])
+Pcs = np.array([4604318.9, 3796942.8, 2.096e6])
+kijs = np.zeros((3, 3))
+eos = PengRobinson78(z=z, Tc=Tcs, Pc=Pcs, acentric_factor=omegas, bip=kijs)
+P = 3.447e6
+T = 410.928
+
+z2 = np.array([0.02370, 0.46695, 0.50935])
+print(eos.calculate_Z(P=P, T=T, z=z2))
+
+z3 = np.array([0.58262, 0.41186, 0.00553])
+print(eos.calculate_Z(P=P, T=T, z=z3))
