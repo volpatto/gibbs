@@ -13,7 +13,7 @@ The main ideas are based in this paper written by [Nichita et al](https://www.sc
 
 There are two main advantages when compared with the Tunneling method:
 
-  * No need to compute derivatives such as Jacobians and Hessians, which can add computational cost;
+  * No need to compute derivatives such as Jacobians and Hessians, which can add computational cost. Also, such quantities can be very hard to calculate exactly or even numerically;
   * No need to provide initial estimates for components molar fraction due to the stochastic characteristic of DE method, which is
   population-based.
 
