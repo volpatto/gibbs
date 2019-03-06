@@ -120,19 +120,3 @@ class PengRobinson78(CEOS):
         # numerically spurious.
         Z_real_roots = Z_roots.real[np.abs(Z_roots.imag) < 1e-5]
         return Z_real_roots
-
-
-z = np.array([0.5, 0.42, 0.08])
-omegas = np.array([0.0115, 0.1928, 0.4902])
-Tcs = np.array([190.556, 425.16667, 617.666667])
-Pcs = np.array([4604318.9, 3796942.8, 2.096e6])
-kijs = np.zeros((3, 3))
-eos = PengRobinson78(z=z, Tc=Tcs, Pc=Pcs, acentric_factor=omegas, bip=kijs)
-P = 3.447e6
-T = 410.928
-
-z2 = np.array([0.02370, 0.46695, 0.50935])
-print(eos.calculate_Z(P=P, T=T, z=z2))
-
-z3 = np.array([0.58262, 0.41186, 0.00553])
-print(eos.calculate_Z(P=P, T=T, z=z3))
