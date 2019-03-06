@@ -1,5 +1,13 @@
 import numpy as np
+import attr
 from scipy.optimize import differential_evolution as de
+
+
+@attr.s(auto_attribs=True)
+class StabilityResult:
+    phase_split: bool
+    x: np.ndarray
+    reduced_tpd: float
 
 
 def stability_test(model, P, T, z, monitor=False):
@@ -19,8 +27,22 @@ def stability_test(model, P, T, z, monitor=False):
     )
 
     x = result.x / result.x.sum()
+    reduced_tpd = result.fun
 
-    return x, result.fun
+    if np.abs(reduced_tpd) <= 1e-7 and np.allclose(x, z):
+        phase_split = False
+    elif reduced_tpd < 0.:
+        phase_split = True
+    else:
+        phase_split = False
+
+    stability_test_result = StabilityResult(
+        phase_split=phase_split,
+        x=x,
+        reduced_tpd=reduced_tpd
+    )
+
+    return stability_test_result
 
 
 def _reduced_tpd(x, model, P, T, z, f_z):

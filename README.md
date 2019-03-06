@@ -19,6 +19,14 @@ There are two main advantages when compared with the Tunneling method:
 
 Nonetheless, the price is paid by means of computational demand because several computations are performed for each solution candidate over the population.
 
+## Current features
+
+By now, `gibbs` can perform the following features:
+
+* Instatiate an Peng-Robinson 78 Equation of States for mixtures and pure components;
+* Perform fugacities computations from the PR78, as well as compressibility factor;
+* Reduced TPD stability analysis with DE.
+
 ## Contributions
 
 Contributions are not allowed right now, but I plan to allow it soon! If you want to contribute, just wait a little more! The project needs to mature a bit!

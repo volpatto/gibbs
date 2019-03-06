@@ -55,9 +55,8 @@ model = InputModel(
     bip=kijs
 )
 
-print(model.fugacity(P, T, z))
 
-x_opt, tpd_opt = stability_test(model, P, T, z)
+result = stability_test(model, P, T, z)
 
-print(x_opt, tpd_opt)
-print(x_opt.sum())
+print(result.x, result.reduced_tpd)
+print(result.phase_split)
