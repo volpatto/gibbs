@@ -106,32 +106,3 @@ class PengRobinson78(CEOS):
 
     def A_ij(self, P, T):
         return (1 - self.bip) * np.sqrt(np.outer(self.A_i(P, T), self.A_i(P, T)))
-
-
-z = np.array([0.5, 0.5])
-Tcs = np.array([126.1, 190.6])
-Pcs = np.array([33.94E5, 46.04E5])
-omegas = np.array([0.04, 0.011])
-kijs = np.array([[0, 0], [0, 0]])
-
-eos = PengRobinson78(z=z, Tc=Tcs, Pc=Pcs, acentric_factor=omegas, bip=kijs)
-
-print(eos.A_mix(P=1e6, T=115, z=np.array([0.5, 0.5])))
-print(eos.A_ij(P=1e6, T=115))
-print(eos.B_i(P=1e6, T=115))
-
-print("*************************")
-
-z = np.array([0.5, 0.42, 0.08])
-omegas = np.array([0.0115, 0.1928, 0.4902])
-Tcs = np.array([190.556, 425.16667, 617.666667])
-Pcs = np.array([4604318.9, 3796942.8, 2.096e6])
-kijs = np.zeros((3, 3))
-P = 3.447e6
-T = 410.928
-
-eos2 = PengRobinson78(z=z, Tc=Tcs, Pc=Pcs, acentric_factor=omegas, bip=kijs)
-print(eos2.A_mix(P=P, T=T, z=z))
-print(eos2.A_ij(P=P, T=T))
-print(eos2.A_i(P=P, T=T))
-print(eos2.B_i(P=P, T=T))
