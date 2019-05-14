@@ -1,0 +1,23 @@
+{% set CONDA_PY = os.environ.get('CONDA_PY', '37') %}
+name: gibbs-py{{ CONDA_PY }}
+
+dependencies:
+  - attrs
+  - numpy
+  - scipy
+  - matplotlib
+  - pandas
+  - seaborn
+  - altair
+  - jupyter
+  - jupyter_contrib_nbextensions
+  - jupyter_nbextensions_configurator
+  - sympy
+  - git
+  - pytest
+  - pylint
+
+environment:
+  PYTHONPATH:
+    - {{ root }}
+  GIBBS_NOTEBOOKS_DIR: {{ root }}/notebooks
