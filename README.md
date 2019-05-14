@@ -23,7 +23,7 @@ Nonetheless, the price is paid by means of computational demand because several 
 
 By now, `gibbs` can perform the following features:
 
-* Instatiate an Peng-Robinson 78 Equation of States for mixtures and pure components;
+* Instantiate an Peng-Robinson 78 Equation of States for mixtures and pure components;
 * Perform fugacities computations from the PR78, as well as compressibility factor;
 * Reduced TPD stability analysis with DE.
 
