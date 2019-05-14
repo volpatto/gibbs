@@ -5,11 +5,11 @@ R = 8.3144598
 
 
 def check_input_dimensions(instance, attribute, value):
-    accentric_factor_not_eq_Tc = len(value) != len(instance.Tc)
-    accentric_factor_not_eq_Pc = len(value) != len(instance.Pc)
+    acentric_factor_not_eq_Tc = len(value) != len(instance.Tc)
+    acentric_factor_not_eq_Pc = len(value) != len(instance.Pc)
     Pc_not_eq_Tc = len(instance.Tc) != len(instance.Pc)
     Pc_not_eq_z = len(instance.Pc) != len(instance.z)
-    if accentric_factor_not_eq_Tc or accentric_factor_not_eq_Pc or Pc_not_eq_Tc or Pc_not_eq_z:
+    if acentric_factor_not_eq_Tc or acentric_factor_not_eq_Pc or Pc_not_eq_Tc or Pc_not_eq_z:
         raise ValueError("Inputed values have incompatible dimensions.")
 
 

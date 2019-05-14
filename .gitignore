@@ -1,5 +1,9 @@
+# VS code files
 .vscode/launch.json
 .vscode/settings.json
 
 __pycache__/
 .pytest_cache
+
+# Pycharm files
+.idea/
