@@ -18,10 +18,9 @@ def stability_test(model, P, T, z, monitor=False):
     result = de(
         _reduced_tpd, 
         bounds=search_space, 
-        args=[model, P, T, z, f_z],
-        popsize=10,
+        args=[model, P, T, f_z],
+        popsize=25,
         recombination=0.9,
-        maxiter=50,
         disp=monitor,
         polish=False
     )
@@ -29,7 +28,7 @@ def stability_test(model, P, T, z, monitor=False):
     x = result.x / result.x.sum()
     reduced_tpd = result.fun
 
-    if np.abs(reduced_tpd) <= 1e-7 and np.allclose(x, z):
+    if np.allclose(x, z):
         phase_split = False
     elif reduced_tpd < 0.:
         phase_split = True
@@ -45,7 +44,7 @@ def stability_test(model, P, T, z, monitor=False):
     return stability_test_result
 
 
-def _reduced_tpd(x, model, P, T, z, f_z):
+def _reduced_tpd(x, model, P, T, f_z):
     tol = 1e-2
     x = x / x.sum()
     condition1 = 1 - tol <= x.sum()
@@ -55,9 +54,9 @@ def _reduced_tpd(x, model, P, T, z, f_z):
     feasible_conditions = condition1 and condition2 and condition3 and condition4
 
     f_x = model.fugacity(P, T, x)
-    tpd = np.dot(x, (np.log(f_x) - np.log(f_z)))
+    tpd = np.sum(x * (np.log(f_x / f_z)))
 
-    if not feasible_conditions:
+    if not 1 - tol <= np.sum(x) <= 1 + tol:
         # Penalization if candidate is not in feasible space
         penalty_parameter = 10.
         tpd += penalty_parameter * _penalty_function(x, 1)
