@@ -9,6 +9,7 @@ dependencies:
 - matplotlib
 - numpy
 - pandas
+- pygmo
 - pylint
 - pytest
 - scipy
