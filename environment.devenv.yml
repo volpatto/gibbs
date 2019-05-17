@@ -16,6 +16,7 @@ dependencies:
   - git
   - pytest
   - pylint
+  - pygmo
 
 environment:
   PYTHONPATH:
