@@ -1,0 +1,20 @@
+version: 1.0.{build}
+image:
+- Visual Studio 2017
+build:
+  parallel: true
+platform:
+  - x64
+environment:
+  CONDA_DIR: C:\Miniconda36-x64
+  PY_VERSION=37
+init:
+  - set PATH=%CONDA_DIR%;%CONDA_DIR%\Scripts;%CONDA_DIR%\Library\bin;%PATH%
+install:
+  - conda config --system --set always_yes yes --set changeps1 no
+  - conda config --system --append channels conda-forge
+  - conda install -n base conda-devenv
+  - conda devenv
+  - call activate gibbs-py%PY_VERSION%
+test_script:
+  - pytest --nbval
