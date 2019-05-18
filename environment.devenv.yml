@@ -14,11 +14,16 @@ dependencies:
   - jupyter_nbextensions_configurator
   - sympy
   - git
-  - pytest
   - pylint
   - pygmo
+
+  # For tests
+  - pytest
+  - hypothesis
+  - nbval
 
 environment:
   PYTHONPATH:
     - {{ root }}
   GIBBS_NOTEBOOKS_DIR: {{ root }}/notebooks
+  PY_VERSION: {{ CONDA_PY }}

@@ -1,0 +1,37 @@
+language: python
+
+dist: trusty
+sudo: required
+
+cache:
+  directories:
+    - $HOME/miniconda
+    
+env:
+  - PY_VERSION=37
+
+os:
+  - linux
+
+before_install:
+  - if test -e $HOME/miniconda/bin; then
+      echo "miniconda already installed.";
+    else
+      echo "Installing miniconda.";
+      rm -rf $HOME/miniconda;
+      wget -O miniconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh;
+      bash miniconda.sh -b -p $HOME/miniconda;
+    fi
+  - export CONDA_BIN=$HOME/miniconda/bin
+  - export CONDA=$CONDA_BIN/conda
+  - $CONDA config --system --set always_yes yes --set changeps1 no
+  - $CONDA config --system --append channels conda-forge
+  - $CONDA install -n base conda-devenv
+
+install:
+  - $CONDA devenv
+  - source $CONDA_BIN/activate gibbs-py$PY_VERSION
+
+script:
+  - pytest
+  - cd $GIBBS_NOTEBOOKS_DIR; pytest --nbval

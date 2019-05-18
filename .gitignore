@@ -2,11 +2,14 @@
 .vscode/launch.json
 .vscode/settings.json
 
+# Test files
 __pycache__/
 .pytest_cache
+.hypothesis/
 
 # Pycharm files
 .idea/
 
 # Notebook files
 *checkpoint.ipynb
+.ipynb_checkpoints
