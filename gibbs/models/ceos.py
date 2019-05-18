@@ -134,13 +134,15 @@ class PengRobinson78(CEOS):
     def calculate_Z_minimal_energy(self, P, T, z):
         Z_roots = self.calculate_Z_factor(P, T, z)
         previous_normalized_gibbs_energy = np.inf
-        for Z in Z_roots:
-            fugacity = self.calculate_fugacity(P, T, z, Z)
-            ln_f = np.log(fugacity)
-            current_normalized_gibbs = np.dot(z, ln_f)
-            if current_normalized_gibbs <= previous_normalized_gibbs_energy:
-                Z_min = Z
-            
+        if len(Z_roots) == 1:
+            Z_min = Z_roots[0]
+        else:
+            for Z in Z_roots:
+                fugacity = self.calculate_fugacity(P, T, z, Z)
+                ln_f = np.log(fugacity)
+                current_normalized_gibbs = np.dot(z, ln_f)
+                if current_normalized_gibbs <= previous_normalized_gibbs_energy:
+                    Z_min = Z
         return Z_min
 
     def calculate_fugacity_coefficient(self, P, T, z, Z_factor):
