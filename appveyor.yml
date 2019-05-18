@@ -7,7 +7,7 @@ platform:
   - x64
 environment:
   CONDA_DIR: C:\Miniconda36-x64
-  PY_VERSION=37
+  PY_VERSION: 37
 init:
   - set PATH=%CONDA_DIR%;%CONDA_DIR%\Scripts;%CONDA_DIR%\Library\bin;%PATH%
 install:
