@@ -3,6 +3,13 @@ language: python
 dist: trusty
 sudo: required
 
+cache:
+  directories:
+    - $HOME/miniconda
+    
+env:
+  - PY_VERSION=37
+
 os:
   - linux
 
