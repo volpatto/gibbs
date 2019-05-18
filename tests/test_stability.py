@@ -3,6 +3,7 @@ import attr
 import numpy as np
 
 from gibbs.models.ceos import PengRobinson78
+from gibbs.mixture import Mixture
 from gibbs.stability_analysis import stability_test
 
 
@@ -17,12 +18,18 @@ class InputModel:
     bip: np.ndarray
 
     @property
+    def input_mixture(self):
+        return Mixture(
+            z=self.z,
+            Tc=self.Tc,
+            Pc=self.Pc,
+            acentric_factor=self.acentric_factor
+        )
+
+    @property
     def model(self):
         return PengRobinson78(
-            z=self.z, 
-            Tc=self.Tc, 
-            Pc=self.Pc, 
-            acentric_factor=self.acentric_factor, 
+            mixture=self.input_mixture,
             bip=self.bip
         )
 
@@ -39,7 +46,6 @@ class InputModel:
         return Z_factor
 
 
-
 @pytest.fixture
 def sample_model():
     z = np.array([0.5, 0.42, 0.08])
@@ -50,8 +56,8 @@ def sample_model():
     P = 3.447e6
     T = 410.928
     model = InputModel(
-        z=z, 
-        P=P, 
+        z=z,
+        P=P,
         T=T,
         Tc=Tcs,
         Pc=Pcs,

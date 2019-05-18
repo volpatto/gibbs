@@ -2,16 +2,22 @@ import pytest
 import numpy as np
 
 from gibbs.models.ceos import PengRobinson78
+from gibbs.mixture import Mixture
 
 
 @pytest.fixture
-def eos_whitson():
+def mixture_whitson():
     z = np.array([0.5, 0.42, 0.08])
     omegas = np.array([0.0115, 0.1928, 0.4902])
     Tcs = np.array([190.556, 425.16667, 617.666667])
     Pcs = np.array([4604318.9, 3796942.8, 2.096e6])
+    return Mixture(z=z, Tc=Tcs, Pc=Pcs, acentric_factor=omegas)
+
+
+@pytest.fixture
+def eos_whitson(mixture_whitson):
     kijs = np.zeros((3, 3))
-    return PengRobinson78(z=z, Tc=Tcs, Pc=Pcs, acentric_factor=omegas, bip=kijs)
+    return PengRobinson78(mixture=mixture_whitson, bip=kijs)
 
 
 def test_eos_parameters_whitson_ex18(eos_whitson):
