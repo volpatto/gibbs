@@ -1,7 +1,4 @@
-language: python
-
-dist: trusty
-sudo: required
+language: generic
 
 cache:
   directories:
@@ -12,14 +9,16 @@ env:
 
 os:
   - linux
+  - osx
 
 before_install:
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then OS=Linux-x86_64; else OS=MacOSX-x86_64; fi
   - if test -e $HOME/miniconda/bin; then
       echo "miniconda already installed.";
     else
       echo "Installing miniconda.";
       rm -rf $HOME/miniconda;
-      wget -O miniconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh;
+      wget -O miniconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-$OS.sh;
       bash miniconda.sh -b -p $HOME/miniconda;
     fi
   - export CONDA_BIN=$HOME/miniconda/bin
