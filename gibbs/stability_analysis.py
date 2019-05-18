@@ -46,7 +46,6 @@ def stability_test(model, P, T, z, monitor=False):
 
 def _reduced_tpd(x, model, P, T, f_z):
     tol = 1e-3
-    # x = x / x.sum()  # this probably could be removed
 
     f_x = model.fugacity(P, T, x)
     tpd = np.sum(x * (np.log(f_x / f_z)))
