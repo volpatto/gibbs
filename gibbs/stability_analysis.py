@@ -45,20 +45,15 @@ def stability_test(model, P, T, z, monitor=False):
 
 
 def _reduced_tpd(x, model, P, T, f_z):
-    tol = 1e-2
-    x = x / x.sum()
-    condition1 = 1 - tol <= x.sum()
-    condition2 = x.sum() <= 1 + tol
-    condition3 = x.max() <= 1.0
-    condition4 = x.min() >= 0.0
-    feasible_conditions = condition1 and condition2 and condition3 and condition4
+    tol = 1e-3
+    # x = x / x.sum()  # this probably could be removed
 
     f_x = model.fugacity(P, T, x)
     tpd = np.sum(x * (np.log(f_x / f_z)))
 
     if not 1 - tol <= np.sum(x) <= 1 + tol:
         # Penalization if candidate is not in feasible space
-        penalty_parameter = 10.
+        penalty_parameter = 1e3
         tpd += penalty_parameter * _penalty_function(x, 1)
 
     return tpd
