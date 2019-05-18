@@ -14,8 +14,13 @@ os:
   - linux
 
 before_install:
-  - wget -O miniconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
-  - bash miniconda.sh -b -p -u $HOME/miniconda
+  - if test -e $HOME/miniconda/bin; then
+      echo "miniconda already installed.";
+    else
+      echo "Installing miniconda.";
+      rm -rf $HOME/miniconda;
+      wget -O miniconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
+      bash miniconda.sh -b -p $HOME/miniconda
   - export CONDA_BIN=$HOME/miniconda/bin
   - export CONDA=$CONDA_BIN/conda
   - $CONDA config --system --set always_yes yes --set changeps1 no
