@@ -3,10 +3,12 @@ dependencies:
 - altair
 - attrs
 - git
+- hypothesis
 - jupyter
 - jupyter_contrib_nbextensions
 - jupyter_nbextensions_configurator
 - matplotlib
+- nbval
 - numpy
 - pandas
 - pygmo

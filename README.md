@@ -1,5 +1,7 @@
 # gibbs
 
+[![Build Status](https://travis-ci.com/volpatto/gibbs.svg?branch=master)](https://travis-ci.com/volpatto/gibbs)
+
 An open source python library for equilibrium calculation based in global minimization of Gibbs free energy.
 
 ## What you will find here? 
