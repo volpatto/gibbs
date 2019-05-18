@@ -1,0 +1,26 @@
+language: python
+
+python:
+  - "3.7"
+
+dist: trusty
+sudo: required
+
+os:
+  - linux
+
+before_install:
+  - wget -O miniconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - export CONDA_BIN=$HOME/miniconda/bin
+  - export CONDA=$CONDA_BIN/conda
+  - $CONDA config --system --set always_yes yes --set changeps1 no
+  - $CONDA config --system --append channels conda-forge
+  - $CONDA install -n base conda-devenv
+
+install:
+  - $CONDA devenv
+  - source $CONDA_BIN/activate gibbs-py$PY_VERSION
+
+script:
+  - pytest --verbose.
