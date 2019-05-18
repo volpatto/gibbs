@@ -26,3 +26,4 @@ environment:
   PYTHONPATH:
     - {{ root }}
   GIBBS_NOTEBOOKS_DIR: {{ root }}/notebooks
+  PY_VERSION: {{ CONDA_PY }}
