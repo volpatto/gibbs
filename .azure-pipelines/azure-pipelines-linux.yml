@@ -1,5 +1,5 @@
 jobs:
-  - job:
+  - job: linux_64
   displayName: Ubuntu
 
   pool:
