@@ -3,42 +3,43 @@
 # Add steps that analyze code, save the dist with the build record, publish to a PyPI-compatible index, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/python
 
-trigger:
-- master
+jobs:
+- job:
+  displayName: ubuntu
 
-pool:
-  vmImage: 'ubuntu-latest'
-strategy:
-  matrix:
-    Python37:
-      python.version: '3.7'
+  pool:
+    vmImage: 'ubuntu-latest'
+  strategy:
+    matrix:
+      Python37:
+        python.version: '3.7'
 
-steps:
-- task: UsePythonVersion@0
-  inputs:
-    versionSpec: '$(python.version)'
-  displayName: 'Use Python $(python.version)'
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+    displayName: 'Use Python $(python.version)'
 
-- bash: echo "##vso[task.prependpath]$CONDA/bin"
-  displayName: 'Add conda to PATH'
+  - bash: echo "##vso[task.prependpath]$CONDA/bin"
+    displayName: 'Add conda to PATH'
 
-- script: |
-    wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
-    bash miniconda.sh -b -p $HOME/miniconda
-    export PATH="$HOME/miniconda/bin:$PATH"
-  displayName: 'Download and install miniconda'
+  # - script: |
+  #     wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+  #     bash miniconda.sh -b -p $HOME/miniconda
+  #     export PATH="$HOME/miniconda/bin:$PATH"
+  #   displayName: 'Download and install miniconda'
 
-- script: |
-    conda config --system --set always_yes yes --set changeps1 no
-    conda config --system --append channels conda-forge
-    conda install -n base conda-devenv
-  displayName: 'Configurating conda'
+  - script: |
+      conda config --system --set always_yes yes --set changeps1 no
+      conda config --system --append channels conda-forge
+      conda install -n base conda-devenv
+    displayName: 'Configurating conda'
 
-- script: |
-    conda devenv
-  displayName: 'Running conda devenv'
+  - script: |
+      conda devenv
+    displayName: 'Running conda devenv'
 
-- script: |
-    source activate gibbs-py37
-    pytest --nbval
-  displayName: 'Tests'
+  - script: |
+      source activate gibbs-py37
+      pytest --nbval
+    displayName: 'Tests'
