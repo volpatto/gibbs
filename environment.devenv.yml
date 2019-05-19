@@ -19,7 +19,6 @@ dependencies:
 
   # For tests
   - pytest
-  - pytest-azurepipelines
   - hypothesis
   - nbval
 
