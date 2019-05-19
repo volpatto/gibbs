@@ -5,7 +5,7 @@
 
 jobs:
 - job:
-  displayName: ubuntu
+  displayName: Ubuntu
 
   pool:
     vmImage: 'ubuntu-latest'
@@ -23,17 +23,47 @@ jobs:
   - bash: echo "##vso[task.prependpath]$CONDA/bin"
     displayName: 'Add conda to PATH'
 
-  # - script: |
-  #     wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
-  #     bash miniconda.sh -b -p $HOME/miniconda
-  #     export PATH="$HOME/miniconda/bin:$PATH"
-  #   displayName: 'Download and install miniconda'
+  - script: |
+      conda config --system --set always_yes yes --set changeps1 no
+      conda config --system --append channels conda-forge
+      conda install -n base conda-devenv
+    displayName: 'Configuring conda'
+
+  - script: |
+      conda devenv
+    displayName: 'Running conda devenv'
+
+  - script: |
+      source activate gibbs-py37
+      pytest --nbval
+    displayName: 'Tests'
+
+- job:
+  displayName: macOS-10.13
+
+  pool:
+    vmImage: 'macOS-10.13'
+  strategy:
+    matrix:
+      Python37:
+        python.version: '3.7'
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+    displayName: 'Use Python $(python.version)'
+
+  - bash: |
+      echo "##vso[task.prependpath]$CONDA/bin"
+      sudo chown -R $USER $CONDA
+    displayName: 'Add conda to PATH'
 
   - script: |
       conda config --system --set always_yes yes --set changeps1 no
       conda config --system --append channels conda-forge
       conda install -n base conda-devenv
-    displayName: 'Configurating conda'
+    displayName: 'Configuring conda'
 
   - script: |
       conda devenv
