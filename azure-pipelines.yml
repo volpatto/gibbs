@@ -1,3 +1,6 @@
+variables:
+  py_version: '37'
+
 jobs:
 - job:
   displayName: Ubuntu
@@ -29,7 +32,7 @@ jobs:
     displayName: 'Running conda devenv'
 
   - script: |
-      source activate gibbs-py37
+      source activate gibbs-py$(py_version)
       pytest --nbval
     displayName: 'Tests'
 
@@ -65,7 +68,7 @@ jobs:
     displayName: 'Running conda devenv'
 
   - script: |
-      source activate gibbs-py37
+      source activate gibbs-py$(py_version)
       pytest --nbval
     displayName: 'Tests'
 
@@ -99,6 +102,6 @@ jobs:
     displayName: 'Running conda devenv'
 
   - script: |
-      call activate gibbs-py37
+      call activate gibbs-py$(py_version)
       pytest --nbval
     displayName: 'Tests'
