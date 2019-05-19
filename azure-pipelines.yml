@@ -28,9 +28,9 @@ steps:
     conda install -n base conda-devenv
     conda devenv
     source $HOME/miniconda/etc/profile.d/conda.sh
-    conda activate gibbs-py37
   displayName: 'Install dependencies'
 
 - script: |
+    conda activate gibbs-py37
     pytest --nbval
   displayName: 'Tests'
