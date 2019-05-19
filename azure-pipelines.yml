@@ -36,6 +36,6 @@ steps:
   displayName: 'Running conda devenv'
 
 - script: |
-    conda activate gibbs-py37
+    source activate gibbs-py37
     pytest --nbval
   displayName: 'Tests'
