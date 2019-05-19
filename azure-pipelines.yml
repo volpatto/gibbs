@@ -10,10 +10,6 @@ pool:
   vmImage: 'ubuntu-latest'
 strategy:
   matrix:
-    Python35:
-      python.version: '3.5'
-    Python36:
-      python.version: '3.6'
     Python37:
       python.version: '3.7'
 
@@ -31,9 +27,9 @@ steps:
     conda config --system --append channels conda-forge
     conda install -n base conda-devenv
     conda devenv
-    source activate gibbs-py37
   displayName: 'Install dependencies'
 
 - script: |
+    source activate gibbs-py37
     pytest --nbval
   displayName: 'Tests'
