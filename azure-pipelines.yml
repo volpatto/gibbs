@@ -1,6 +1,12 @@
 variables:
   py_version: '37'
 
+trigger:
+- master
+
+pr:
+- master
+
 jobs:
 - job:
   displayName: Ubuntu
