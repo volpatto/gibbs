@@ -1,14 +1,7 @@
-import attr
+import pandas
 
 from gibbs.mixture import Mixture
 from gibbs.models.ceos import CEOS, PengRobinson78
-
-
-@attr.s
-class PhaseEnvelope:
-    """
-    Storage phase envelope data.
-    """
 
 
 def calculate_phase_envelope_grid(mix, eos, P_min, P_max, T_min, T_max, n_points_P=30, n_points_T=30):
@@ -42,6 +35,6 @@ def calculate_phase_envelope_grid(mix, eos, P_min, P_max, T_min, T_max, n_points
     :return:
         Phase envelope data containing the information about the generated points and which phases are
         present in each PT-point.
-    :rtype: PhaseEnvelope
+    :rtype: pandas.DataFrame
     """
     raise NotImplementedError('Equilibrium calculation is not implemented yet.')

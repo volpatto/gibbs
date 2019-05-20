@@ -1,2 +1,2 @@
 import pytest
-import gibbs.phase_envelope
+from gibbs.phase_envelope import calculate_phase_envelope_grid
