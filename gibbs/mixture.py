@@ -13,10 +13,10 @@ def check_input_dimensions(instance, attribute, value):
 
 @attr.s
 class Mixture:
-    z: np.ndarray
-    Tc: np.ndarray
-    Pc: np.ndarray
-    acentric_factor: np.ndarray
+    z = attr.ib(type=np.ndarray)
+    Tc = attr.ib(type=np.ndarray)
+    Pc = attr.ib(type=np.ndarray)
+    acentric_factor = attr.ib(type=np.ndarray, validator=[check_input_dimensions])
 
     @z.validator
     def check_overall_composition(self, attribute, value):
