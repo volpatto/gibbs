@@ -16,6 +16,7 @@ dependencies:
   - git
   - pylint
   - pygmo
+  - thermo
 
   # For tests
   - pytest

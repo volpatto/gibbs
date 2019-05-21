@@ -19,8 +19,10 @@ def stability_test(model, P, T, z, monitor=False):
         _reduced_tpd, 
         bounds=search_space, 
         args=[model, P, T, f_z],
-        popsize=25,
+        popsize=20,
         recombination=0.9,
+        mutation=0.6,
+        tol=1e-8,
         disp=monitor,
         polish=False
     )
@@ -28,7 +30,7 @@ def stability_test(model, P, T, z, monitor=False):
     x = result.x / result.x.sum()
     reduced_tpd = result.fun
 
-    if np.allclose(x, z):
+    if np.allclose(x, z, rtol=1e-3):  # This criterium could be separated in a function itself with a norm
         phase_split = False
     elif reduced_tpd < 0.:
         phase_split = True
