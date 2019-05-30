@@ -30,7 +30,8 @@ def stability_test(model, P, T, z, monitor=False, rtol=1e-3, polish=True):
     x = result.x / result.x.sum()
     reduced_tpd = result.fun
 
-    if np.allclose(x, z, rtol=rtol):  # This criterium could be separated in a function itself with a norm
+    if np.allclose(x, z, rtol=rtol):  # This criterion could be separated in a function itself
+        # with a norm
         phase_split = False
     elif reduced_tpd < 0.:
         phase_split = True

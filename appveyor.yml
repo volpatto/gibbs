@@ -19,6 +19,6 @@ install:
   - cmd: conda config --system --append channels conda-forge
   - cmd: conda install -n base conda-devenv
   - cmd: conda devenv
-  - cmd: activate gibbs-py37
+  - cmd: activate gibbs-py36
 test_script:
   - cmd: pytest --nbval
