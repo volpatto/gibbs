@@ -1,7 +1,6 @@
 import numpy as np
 import attr
 from scipy.optimize import differential_evolution as de
-from scipy.optimize import minimize
 
 
 @attr.s(auto_attribs=True)
@@ -11,44 +10,24 @@ class StabilityResult:
     reduced_tpd: float
 
 
-def stability_test(model, P, T, z, monitor=False, ctol=1e-5, rtol=1e-3, polish=False):
+def stability_test(model, P, T, z, monitor=False, rtol=1e-5, polish=True):
     n_components = model.number_of_components
     search_space = [(0, 1)] * n_components
     f_z = model.fugacity(P, T, z)
 
     result = de(
-        _reduced_tpd, 
+        _reduced_tpd,
         bounds=search_space, 
-        args=[model, P, T, f_z, ctol],
-        popsize=50,
+        args=[model, P, T, f_z],
+        popsize=30,
         recombination=0.95,
         mutation=0.6,
-        tol=1e-8,
+        tol=1e-3,
         disp=monitor,
-        polish=False
+        polish=polish
     )
 
     x = result.x / result.x.sum()
-
-    if polish:
-
-        cons = (
-            {'type': 'ineq', 'fun': lambda x: np.sum(x) - 1},
-            {'type': 'ineq', 'fun': lambda x: 1 - np.sum(x)}
-        )
-
-        result = minimize(
-            _reduced_tpd,
-            x,
-            args=(model, P, T, f_z, ctol),
-            bounds=search_space,
-            method='SLSQP',
-            constraints=cons,
-            jac=False,
-            tol=1e-10,
-        )
-        x = result.x
-
     reduced_tpd = result.fun
 
     if np.allclose(x, z, rtol=rtol):  # This criterium could be separated in a function itself with a norm
@@ -69,21 +48,12 @@ def stability_test(model, P, T, z, monitor=False, ctol=1e-5, rtol=1e-3, polish=F
     return stability_test_result
 
 
-def _reduced_tpd(x, model, P, T, f_z, tol=1e-5):
+def _reduced_tpd(n, model, P, T, f_z):
     try:
+        x = n / n.sum()
         f_x = model.fugacity(P, T, x)
         tpd = np.sum(x * (np.log(f_x / f_z)))
-
-        if not 1 - tol <= np.sum(x) <= 1 + tol:
-            # Penalization if candidate is not in feasible space
-            penalty_parameter = 1e3
-            tpd += penalty_parameter * _penalty_function(x, 1)
     except TypeError:
         tpd = np.inf
 
     return tpd
-
-
-def _penalty_function(x, feasible_limit):
-    feasible_region_marker = np.abs(x.sum() - feasible_limit)
-    return feasible_region_marker * feasible_region_marker
