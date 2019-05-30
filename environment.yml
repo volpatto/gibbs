@@ -15,8 +15,9 @@ dependencies:
 - pylint
 - pytest
 - pytest-lazy-fixture
+- python =3.6
 - scipy
 - seaborn
 - sympy
 - thermo
-name: gibbs-py37
+name: gibbs-py36
