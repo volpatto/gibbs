@@ -10,7 +10,7 @@ class StabilityResult:
     reduced_tpd: float
 
 
-def stability_test(model, P, T, z, monitor=False, rtol=1e-5, polish=True):
+def stability_test(model, P, T, z, monitor=False, rtol=1e-3, polish=True):
     n_components = model.number_of_components
     search_space = [(0, 1)] * n_components
     f_z = model.fugacity(P, T, z)
