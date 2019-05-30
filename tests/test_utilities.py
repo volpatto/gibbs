@@ -1,5 +1,5 @@
 import pytest
-from gibbs.utilities import convert_psi_to_Pa, convert_F_to_K
+from gibbs.utilities import convert_psi_to_Pa, convert_F_to_K, convert_bar_to_Pa
 
 
 @pytest.mark.parametrize('P_in_psi, P_in_Pa', [
@@ -23,3 +23,13 @@ def test_psi_to_Pa(P_in_psi, P_in_Pa):
 ])
 def test_F_to_K(T_in_F, T_in_K):
     assert convert_F_to_K(T_in_F) == pytest.approx(T_in_K, rel=1e-3)
+
+
+@pytest.mark.parametrize('P_in_bar, P_in_Pa', [
+    [1, 100000],
+    [10, 1000000],
+    [50, 5000000],
+    [250, 25000000]
+])
+def test_bar_to_Pa(P_in_bar, P_in_Pa):
+    assert convert_bar_to_Pa(P_in_bar) == pytest.approx(P_in_Pa, rel=1e-3)

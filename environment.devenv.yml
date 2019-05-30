@@ -16,9 +16,11 @@ dependencies:
   - git
   - pylint
   - pygmo
+  - thermo
 
   # For tests
   - pytest
+  - pytest-lazy-fixture
   - hypothesis
   - nbval
 

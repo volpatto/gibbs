@@ -14,7 +14,9 @@ dependencies:
 - pygmo
 - pylint
 - pytest
+- pytest-lazy-fixture
 - scipy
 - seaborn
 - sympy
+- thermo
 name: gibbs-py37

@@ -27,3 +27,17 @@ def convert_F_to_K(T):
     :rtype: float|numpy.ndarray
     """
     return (T + 459.67) * (5. / 9.)
+
+
+def convert_bar_to_Pa(P):
+    """
+    Convert pressure in Pa units to bar.
+
+    :param float|numpy.ndarray P:
+        Pressure value(s) in Pa.
+
+    :return:
+        Pressure value(s) in bar.
+    :rtype float|numpy.ndarray
+    """
+    return P * 1e5
