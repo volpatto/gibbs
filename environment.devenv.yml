@@ -20,6 +20,7 @@ dependencies:
 
   # For tests
   - pytest
+  - pytest-lazy-fixture
   - hypothesis
   - nbval
 
