@@ -1,5 +1,5 @@
 variables:
-  py_version: '37'
+  py_version: '36'
 
 trigger:
 - master
