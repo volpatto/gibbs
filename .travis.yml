@@ -27,7 +27,7 @@ before_install:
     fi
   - export CONDA_BIN=$HOME/miniconda/bin
   - export CONDA=$CONDA_BIN/conda
-  - $CONDA config --system --set always_yes yes --set changeps1 no
+  - $CONDA config --system --set always_yes yes --set changeps1 false
   - $CONDA config --system --append channels conda-forge
   - $CONDA install -n base conda-devenv
 
