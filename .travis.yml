@@ -6,10 +6,10 @@ branches:
 
 cache:
   directories:
-    - $HOME/miniconda
+    - $HOME/miniconda/bin
     
 env:
-  - PY_VERSION=37
+  - PY_VERSION=36
 
 os:
   - linux
