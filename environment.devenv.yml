@@ -1,7 +1,8 @@
-{% set CONDA_PY = os.environ.get('CONDA_PY', '37') %}
+{% set CONDA_PY = os.environ.get('CONDA_PY', '36') %}
 name: gibbs-py{{ CONDA_PY }}
 
 dependencies:
+  - python=3.6
   - attrs
   - numpy
   - scipy
@@ -16,9 +17,11 @@ dependencies:
   - git
   - pylint
   - pygmo
+  - thermo
 
   # For tests
   - pytest
+  - pytest-lazy-fixture
   - hypothesis
   - nbval
 

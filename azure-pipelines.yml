@@ -1,0 +1,15 @@
+variables:
+  py_version: '36'
+
+trigger:
+- master
+
+pr:
+- master
+
+jobs:
+- template: .azure-templates/linux.yml
+
+- template: .azure-templates/osx.yml
+
+- template: .azure-templates/win.yml

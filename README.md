@@ -1,6 +1,8 @@
 # gibbs
 
 [![Build Status](https://travis-ci.com/volpatto/gibbs.svg?branch=master)](https://travis-ci.com/volpatto/gibbs)
+[![Build status](https://ci.appveyor.com/api/projects/status/gkl9lve28byp60jr/branch/master?svg=true)](https://ci.appveyor.com/project/volpatto/gibbs/branch/master)
+[![Build Status](https://dev.azure.com/volpatto/volpatto/_apis/build/status/gibbs?branchName=master)](https://dev.azure.com/volpatto/volpatto/_build/latest?definitionId=2&branchName=master)
 
 An open source python library for equilibrium calculation based in global minimization of Gibbs free energy.
 
@@ -16,8 +18,7 @@ The main ideas are based in this paper written by [Nichita et al](https://www.sc
 There are two main advantages when compared with the Tunneling method:
 
   * No need to compute derivatives such as Jacobians and Hessians, which can add computational cost. Also, such quantities can be very hard to calculate exactly or even numerically;
-  * No need to provide initial estimates for components molar fraction due to the stochastic characteristic of DE method, which is
-  population-based.
+  * No need to provide initial estimates for components molar fraction due to the stochastic characteristic of DE method, which is population-based.
 
 Nonetheless, the price is paid by means of computational demand because several computations are performed for each solution candidate over the population.
 
@@ -25,13 +26,19 @@ Nonetheless, the price is paid by means of computational demand because several 
 
 By now, `gibbs` can perform the following features:
 
-* Instantiate an Peng-Robinson 78 Equation of States for mixtures and pure components;
+* Classic cubic Equations of State:
+  - Soave-Redlich-Kwong;
+  - Peng-Robinson 78.
+* Equation of States for mixtures and pure components;
 * Perform fugacities computations from the PR78, as well as compressibility factor;
 * Reduced TPD stability analysis with DE.
 
 ## Contributions
 
 Contributions are not allowed right now, but I plan to allow it soon! If you want to contribute, just wait a little more! The project needs to mature a bit!
+
+* Golden rule: master is always passing. `gibbs` is under Test Driven Development strategy. New features must be implemented
+in a proper branch, then it can be merged in master if it pass all the proposed tests.
 
 ## About me
 

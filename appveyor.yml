@@ -1,0 +1,24 @@
+skip_branch_with_pr: true
+branches:
+  only:
+    - master
+version: 1.0.{build}
+image:
+- Visual Studio 2015
+build: false
+platform:
+  - x64
+configuration:
+  - Release
+environment:
+  CONDA_DIR: C:\Miniconda36-x64
+init:
+  - cmd: set PATH=%CONDA_DIR%;%CONDA_DIR%\Scripts;%CONDA_DIR%\Library\bin;%PATH%
+install:
+  - cmd: conda config --system --set always_yes yes --set changeps1 no
+  - cmd: conda config --system --append channels conda-forge
+  - cmd: conda install -n base conda-devenv
+  - cmd: conda devenv
+  - cmd: activate gibbs-py36
+test_script:
+  - cmd: pytest --nbval
