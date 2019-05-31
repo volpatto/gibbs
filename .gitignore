@@ -13,3 +13,9 @@ __pycache__/
 # Notebook files
 *checkpoint.ipynb
 .ipynb_checkpoints
+
+# Cache files
+*.pyc
+
+# VI/VIM
+*.swp
