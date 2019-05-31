@@ -3,10 +3,6 @@ language: generic
 branches:
   only:
     - master
-
-cache:
-  directories:
-    - $HOME/miniconda
     
 env:
   - PY_VERSION=36
