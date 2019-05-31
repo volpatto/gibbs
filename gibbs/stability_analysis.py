@@ -11,7 +11,7 @@ class StabilityResult:
 
 
 def stability_test(
-        model, P, T, z, strategy='best1bin', popsize=30, recombination=0.85, mutation=0.7,
+        model, P, T, z, strategy='best1bin', popsize=35, recombination=0.95, mutation=0.6,
         tol=1e-2, rtol=1e-3, seed=np.random.RandomState(), workers=-1, monitor=False, polish=True
 ):
     if popsize <= 0:
