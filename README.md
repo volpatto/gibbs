@@ -4,7 +4,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/gkl9lve28byp60jr/branch/master?svg=true)](https://ci.appveyor.com/project/volpatto/gibbs/branch/master)
 [![Build Status](https://dev.azure.com/volpatto/volpatto/_apis/build/status/gibbs?branchName=master)](https://dev.azure.com/volpatto/volpatto/_build/latest?definitionId=2&branchName=master)
 
-An open source python library for equilibrium calculation based in global minimization of Gibbs free energy.
+An open source python library for equilibrium calculation based on global minimization of Gibbs free energy.
 
 ## What you will find here? 
 
@@ -38,8 +38,8 @@ By now, `gibbs` can perform the following features:
 Contributions are not allowed right now, but I plan to allow it soon! If you want to contribute, just wait a little more! The project needs to mature a bit!
 
 * Golden rule: master is always passing. `gibbs` is under Test Driven Development strategy. New features must be implemented
-in a proper branch, then it can be merged in master if it pass all the proposed tests.
+in a proper branch, then it can be merged in master if it pass in all the proposed tests.
 
 ## About me
 
-My name is Diego Volpatto, I'm a Numerical Dev at [ESSS](https://www.esss.co/). Check it out some of our public repos clicking [here](https://github.com/ESSS). Also, I'm currently DSc. student in Computational Modeling at [brazilian National Laboratory for Scientific Computing](https://www.lncc.br), where I do research in Mixed Hybrid and Discontinuous Galerkin Finite Element Methods. One can contact me though the email: dtvolpatto@gmail.com
+My name is Diego Volpatto, I'm a Numerical Dev at [ESSS](https://www.esss.co/). Check it out some of our public repos clicking [here](https://github.com/ESSS). Also, I'm currently DSc. student in Computational Modeling at [brazilian National Laboratory for Scientific Computing](https://www.lncc.br), where I do research in Mixed Hybrid and Discontinuous Galerkin Finite Element Methods. One can contact me through the email: dtvolpatto@gmail.com
