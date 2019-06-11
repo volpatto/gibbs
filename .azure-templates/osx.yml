@@ -32,5 +32,7 @@ jobs:
 
   - script: |
       source activate gibbs-py$(py_version)
+      pytest
+      cd notebooks
       pytest --nbval
     displayName: 'Tests'
