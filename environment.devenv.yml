@@ -22,6 +22,8 @@ dependencies:
   # For tests
   - pytest
   - pytest-lazy-fixture
+  - pytest-cov
+  - codecov
   - hypothesis
   - nbval
 
