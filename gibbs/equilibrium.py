@@ -48,7 +48,7 @@ def calculate_equilibrium(mix, eos, P, T):
     raise NotImplementedError('Equilibrium calculation is not implemented yet.')
 
 
-def gibbs_free_energy_reduced(N, number_of_components, number_of_phases, mix, eos, P, T):
+def calculate_gibbs_free_energy_reduced(N, number_of_components, number_of_phases, mix, eos, P, T):
     n_ij = _transform_molar_vector_data_in_matrix(N, number_of_components, number_of_phases)
     reduced_gibbs_energy = 0.0
     # for j in range(number_of_phases):
