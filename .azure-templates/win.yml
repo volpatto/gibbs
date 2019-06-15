@@ -30,7 +30,19 @@ jobs:
 
   - script: |
       call activate gibbs-py$(py_version)
-      pytest
+      pytest --cov-config=.coveragerc --junitxml=junit/test-results.xml --cov-report=xml --cov-report=html --cov=gibbs
       cd notebooks
       pytest --nbval
     displayName: 'Tests'
+
+  - task: PublishTestResults@2
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFiles: '**/test-*.xml'
+      testRunTitle: 'Publish test results for Python $(python.version)'
+
+  - task: PublishCodeCoverageResults@1
+      inputs:
+        codeCoverageTool: Cobertura
+        summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
+        reportDirectory: '$(System.DefaultWorkingDirectory)/**/htmlcov'
