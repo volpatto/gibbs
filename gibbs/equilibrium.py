@@ -32,11 +32,14 @@ def calculate_equilibrium(mix, eos, P, T):
     Given a mixture modeled by an EoS at a known PT-conditions, calculate the thermodynamical equilibrium.
 
     :param Mixture mix:
-        A mixture.
+        A mixture setup.
+
     :param CEOS|PengRobinson78|SoaveRedlichKwong eos:
         Equation of State.
+
     :param float P:
         Pressure value.
+
     :param float T:
         Temperature value.
 
@@ -54,27 +57,36 @@ def calculate_gibbs_free_energy_reduced(N, number_of_components, number_of_phase
     for equilibrium calculations.
 
     :param numpy.ndarray N:
-        Vector ordered component molar amount for each component, arranged in terms of phases.
+        Vector ordered component molar amount for each component, arranged in terms of phases. This array must
+        be indexed as N[number_of_phases, number_of_components].
+
     :param int number_of_components:
         Number of components in the mixture.
+
     :param int number_of_phases:
         Number of trial phases.
+
     :param Mixture mix:
         The input mixture.
+
     :param CEOS|PengRobinson78|SoaveRedlichKwong eos:
         Equation of State or model.
+
     :param float P:
         Pressure value.
+
     :param float T:
         Temperature value.
 
     :return:
     :rtype: float
     """
+    if N.size != number_of_phases * number_of_components:
+        raise ValueError('Unexpected amount of storage for amount of mols in each phase.')
+
     n_ij = _transform_molar_vector_data_in_matrix(N, number_of_components, number_of_phases)
-    reduced_gibbs_energy = 0.0
-    # for j in range(number_of_phases):
-    #     reduced_gibbs_energy +=
+
+    # reduced_gibbs_energy =
     return
 
 
@@ -88,17 +100,52 @@ def _transform_molar_vector_data_in_matrix(N, number_of_components, number_of_ph
         :func:`See here <gibbs.equilibrium.calculate_gibbs_free_energy_reduced>`.
 
     :param int number_of_components:
-        Number of components in the mixture.
+        :func:`See here <gibbs.equilibrium.calculate_gibbs_free_energy_reduced>`.
 
     :param int number_of_phases:
-        Expected number of phases in the mixture.
+        :func:`See here <gibbs.equilibrium.calculate_gibbs_free_energy_reduced>`.
 
     :return:
         A matrix where its lines represents phases and columns are the components.
     :rtype: numpy.ndarray
     """
-    if N.size != number_of_phases * number_of_components:
-        raise ValueError('Unexpected amount of storage for amount of mols in each phase.')
-
     n_ij = N.reshape((number_of_phases, number_of_components))
     return n_ij
+
+
+def _assemble_fugacity_matrix(X, number_of_phases, eos, P, T):
+    """
+    Assembles the fugacity matrix f_ij.
+
+    :param numpy.ndarray X:
+        Vector ordered component molar fraction for each component, arranged in terms of phases. This array must
+        be indexed as X[number_of_phases, number_of_components].
+
+    :param int number_of_phases:
+        :func:`See here <gibbs.equilibrium.calculate_gibbs_free_energy_reduced>`.
+
+    :param CEOS|PengRobinson78|SoaveRedlichKwong eos:
+        :func:`See here <gibbs.equilibrium.calculate_gibbs_free_energy_reduced>`.
+
+    :param float P:
+        :func:`See here <gibbs.equilibrium.calculate_gibbs_free_energy_reduced>`.
+
+    :param float T:
+        :func:`See here <gibbs.equilibrium.calculate_gibbs_free_energy_reduced>`.
+
+    :return:
+        The matrix f_ij containing all the fugacities for each component in each phase.
+    :rtype: numpy.ndarray
+    """
+    fugacity_matrix = np.zeros(X.shape)
+    for phase in range(number_of_phases):  # Unfortunately, this calculation can not be vectorized
+        phase_composition = X[phase, :]
+        phase_compressibility = eos.calculate_Z_minimal_energy(P, T, phase_composition)
+        phase_fugacities = eos.calculate_fugacity(P, T, phase_composition, phase_compressibility)
+        fugacity_matrix[phase, :] = phase_fugacities
+
+    return fugacity_matrix
+
+
+def _normalize_and_transform_phase_molar_fractions_to_matrix():
+    raise NotImplementedError('To be implemented.')
