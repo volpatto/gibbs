@@ -76,6 +76,7 @@ def _calculate_gibbs_free_energy_reduced(N, number_of_components, number_of_phas
         Temperature value.
 
     :return:
+        The evaluation of reduced Gibbs free energy.
     :rtype: float
     """
     if N.size != number_of_phases * number_of_components:
