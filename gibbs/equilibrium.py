@@ -49,6 +49,28 @@ def calculate_equilibrium(mix, eos, P, T):
 
 
 def calculate_gibbs_free_energy_reduced(N, number_of_components, number_of_phases, mix, eos, P, T):
+    """
+    Calculates the reduced Gibbs free energy. This function is used as objective function in the minimization procedure
+    for equilibrium calculations.
+
+    :param numpy.ndarray N:
+        Vector ordered component molar amount for each component, arranged in terms of phases.
+    :param int number_of_components:
+        Number of components in the mixture.
+    :param int number_of_phases:
+        Number of trial phases.
+    :param Mixture mix:
+        The input mixture.
+    :param CEOS|PengRobinson78|SoaveRedlichKwong eos:
+        Equation of State or model.
+    :param float P:
+        Pressure value.
+    :param float T:
+        Temperature value.
+
+    :return:
+    :rtype: float
+    """
     n_ij = _transform_molar_vector_data_in_matrix(N, number_of_components, number_of_phases)
     reduced_gibbs_energy = 0.0
     # for j in range(number_of_phases):
@@ -63,7 +85,7 @@ def _transform_molar_vector_data_in_matrix(N, number_of_components, number_of_ph
     N = (n_1, n_2, ..., n_np)^T, where n_j here is the molar composition vector for each component in the phase j.
 
     :param numpy.ndarray N:
-        Vector ordered component molar amount for each component, arranged in terms of phases.
+        :func:`See here <gibbs.equilibrium.calculate_gibbs_free_energy_reduced>`.
 
     :param int number_of_components:
         Number of components in the mixture.
