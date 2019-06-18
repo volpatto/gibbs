@@ -51,7 +51,7 @@ def calculate_equilibrium(mix, eos, P, T):
     raise NotImplementedError('Equilibrium calculation is not implemented yet.')
 
 
-def calculate_gibbs_free_energy_reduced(N, number_of_components, number_of_phases, mix, eos, P, T):
+def _calculate_gibbs_free_energy_reduced(N, number_of_components, number_of_phases, eos, P, T):
     """
     Calculates the reduced Gibbs free energy. This function is used as objective function in the minimization procedure
     for equilibrium calculations.
@@ -65,9 +65,6 @@ def calculate_gibbs_free_energy_reduced(N, number_of_components, number_of_phase
 
     :param int number_of_phases:
         Number of trial phases.
-
-    :param Mixture mix:
-        The input mixture.
 
     :param CEOS|PengRobinson78|SoaveRedlichKwong eos:
         Equation of State or model.
@@ -85,9 +82,11 @@ def calculate_gibbs_free_energy_reduced(N, number_of_components, number_of_phase
         raise ValueError('Unexpected amount of storage for amount of mols in each phase.')
 
     n_ij = _transform_molar_vector_data_in_matrix(N, number_of_components, number_of_phases)
+    x_ij = _normalize_phase_molar_amount_to_fractions_and_transform_to_matrix(n_ij, number_of_phases)
+    fugacities_matrix = _assemble_fugacity_matrix(x_ij, number_of_phases, eos, P, T)
+    ln_f_matrix = np.log(fugacities_matrix)
 
-    # reduced_gibbs_energy =
-    return
+    return np.tensordot(n_ij, ln_f_matrix)
 
 
 def _transform_molar_vector_data_in_matrix(N, number_of_components, number_of_phases):
@@ -147,5 +146,23 @@ def _assemble_fugacity_matrix(X, number_of_phases, eos, P, T):
     return fugacity_matrix
 
 
-def _normalize_and_transform_phase_molar_fractions_to_matrix():
-    raise NotImplementedError('To be implemented.')
+def _normalize_phase_molar_amount_to_fractions_and_transform_to_matrix(N, number_of_phases):
+    """
+    Converts the component molar amount matrix entries to molar fractions.
+
+    :param numpy.ndarray N:
+        :func:`See here <gibbs.equilibrium.calculate_gibbs_free_energy_reduced>`.
+
+    :param int number_of_phases:
+        :func:`See here <gibbs.equilibrium.calculate_gibbs_free_energy_reduced>`.
+
+    :return:
+        The matrix X_ij containing all the mole fractions for each component in each phase.
+    :rtype: numpy.ndarray
+    """
+    X = np.zeros(N.shape)
+    for phase in range(number_of_phases):  # This loop could be optimized
+        phase_composition = N[phase, :] / N[phase, :].sum()
+        X[phase, :] = phase_composition
+
+    return X
