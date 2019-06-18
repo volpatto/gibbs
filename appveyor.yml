@@ -21,4 +21,6 @@ install:
   - cmd: conda devenv
   - cmd: activate gibbs-py36
 test_script:
+  - cmd: pytest
+  - cmd: cd notebooks
   - cmd: pytest --nbval
