@@ -31,13 +31,27 @@ def convert_F_to_K(T):
 
 def convert_bar_to_Pa(P):
     """
-    Convert pressure in Pa units to bar.
+    Convert pressure in bar units to Pa.
 
     :param float|numpy.ndarray P:
-        Pressure value(s) in Pa.
+        Pressure value(s) in bar.
 
     :return:
-        Pressure value(s) in bar.
+        Pressure value(s) in Pa.
     :rtype float|numpy.ndarray
     """
     return P * 1e5
+
+
+def convert_atm_to_Pa(P):
+    """
+    Convert pressure in atm units to Pa.
+
+    :param float|numpy.ndarray P:
+        Pressure value(s) in atm.
+
+    :return:
+        Pressure value(s) in Pa.
+    :rtype float|numpy.ndarray
+    """
+    return P * 101325.
