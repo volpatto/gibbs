@@ -26,16 +26,17 @@ class ResultEquilibrium:
     num_of_phases = float
 
 
-def calculate_equilibrium(model, P, T, z, number_of_trial_phases=3, strategy='best1bin', popsize=50,
-    recombination=0.95, mutation=0.6, tol=1e-5, seed=np.random.RandomState(),
-    workers=1, monitor=False, polish=True):
+def calculate_equilibrium(model, P, T, z, number_of_trial_phases=3, molar_base=1, strategy='best1bin', popsize=30,
+    recombination=0.95, mutation=0.7, tol=1e-5, seed=np.random.RandomState(),
+    workers=1, monitor=False, polish=False):
     """
     Given a mixture modeled by an EoS at a known PT-conditions, calculate the thermodynamical equilibrium.
 
     :param model:
     :param P:
     :param T:
-    :param z:
+    :param numpy.ndarray z:
+        Mixture overall composition.
     :param number_of_trial_phases:
     :param strategy:
     :param popsize:
@@ -75,14 +76,14 @@ def calculate_equilibrium(model, P, T, z, number_of_trial_phases=3, strategy='be
         raise ValueError('Tolerance must be a positive float.')
 
     n_components = model.number_of_components
-    search_space = [(1e-15, 1)] * n_components * (number_of_trial_phases - 1)
+    search_space = [(0, 1)] * n_components * (number_of_trial_phases - 1)
 
     result = de(
         _calculate_gibbs_free_energy_reduced,
         bounds=search_space,
-        args=[n_components, number_of_trial_phases, model, P, T, z],
+        args=[n_components, number_of_trial_phases, model, P, T, z, molar_base],
         strategy=strategy,
-        popsize=popsize,
+        popsize=popsize * n_components * (number_of_trial_phases - 1),
         recombination=recombination,
         mutation=mutation,
         tol=tol,
@@ -99,23 +100,25 @@ def calculate_equilibrium(model, P, T, z, number_of_trial_phases=3, strategy='be
         n_components,
         number_of_trial_phases - 1
     )
-    n_ij_solution = _calculate_components_number_of_moles_from_beta(beta_solution, z)
+    n_ij_solution = _calculate_components_number_of_moles_from_beta(beta_solution, z, molar_base)
     x_ij_solution = _normalize_phase_molar_amount_to_fractions(
         n_ij_solution,
         number_of_trial_phases
     )
+    phase_fractions = _calculate_phase_molar_fractions(n_ij_solution, molar_base)
 
-    return x_ij_solution, reduced_gibbs_free_energy
+    return x_ij_solution, phase_fractions, reduced_gibbs_free_energy
 
 
 def _calculate_gibbs_free_energy_reduced(
-    beta_vector, number_of_components, number_of_phases, model, P, T, z
+    beta_vector, number_of_components, number_of_phases, model, P, T, z, molar_base=1
 ):
     """
     Calculates the reduced Gibbs free energy. This function is used as objective function in the minimization procedure
     for equilibrium calculations.
 
     :param numpy.ndarray N:
+        TODO: update this argument
         Vector ordered component molar amount for each component, arranged in terms of phases. This array must
         be indexed as N[number_of_phases, number_of_components].
 
@@ -134,6 +137,9 @@ def _calculate_gibbs_free_energy_reduced(
     :param float T:
         Temperature value.
 
+    :param numpy.ndarray z:
+        Mixture overall composition.
+
     :return:
         The evaluation of reduced Gibbs free energy.
     :rtype: float
@@ -141,16 +147,13 @@ def _calculate_gibbs_free_energy_reduced(
     if beta_vector.size != (number_of_phases - 1) * number_of_components:
         raise ValueError('Unexpected amount of storage for amount of mols in each phase.')
 
-    try:
-        beta = _transform_vector_data_in_matrix(beta_vector, number_of_components, number_of_phases - 1)
-        n_ij = _calculate_components_number_of_moles_from_beta(beta, z)
-        x_ij = _normalize_phase_molar_amount_to_fractions(n_ij, number_of_phases)
-        fugacities_matrix = _assemble_fugacity_matrix(x_ij, number_of_phases, model, P, T)
-        ln_f_matrix = np.log(fugacities_matrix)
+    beta = _transform_vector_data_in_matrix(beta_vector, number_of_components, number_of_phases - 1)
+    n_ij = _calculate_components_number_of_moles_from_beta(beta, z, molar_base)
+    x_ij = _normalize_phase_molar_amount_to_fractions(n_ij, number_of_phases)
+    fugacities_matrix = _assemble_fugacity_matrix(x_ij, number_of_phases, model, P, T)
+    ln_f_matrix = np.log(fugacities_matrix)
 
-        reduced_gibbs_free_energy = np.tensordot(n_ij, ln_f_matrix)
-    except:
-        reduced_gibbs_free_energy = np.inf
+    reduced_gibbs_free_energy = np.tensordot(n_ij, ln_f_matrix)
 
     return reduced_gibbs_free_energy
 
@@ -238,7 +241,7 @@ def _normalize_phase_molar_amount_to_fractions(
     return X
 
 
-def _calculate_components_number_of_moles_from_beta(beta, z, molar_base=1):
+def _calculate_components_number_of_moles_from_beta(beta, z, molar_base=1.0):
     number_of_phases = beta.shape[0] + 1
     number_of_components = beta.shape[1]
     N = np.zeros((number_of_phases, number_of_components))
@@ -257,3 +260,12 @@ def _calculate_components_number_of_moles_from_beta(beta, z, molar_base=1):
         N[-1, i] = z[i] * molar_base - N[:(number_of_phases - 1), i].sum()
 
     return N
+
+
+def _calculate_phase_molar_fractions(N, molar_base=1.0):
+    number_of_phases = N.shape[0]
+    phase_fractions = np.zeros(number_of_phases)
+    for phase in range(number_of_phases):
+        phase_fractions[phase] = N[phase, :].sum() / molar_base
+
+    return phase_fractions

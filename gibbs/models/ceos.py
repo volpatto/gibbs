@@ -94,7 +94,7 @@ class CEOS(object):
 
 
 @attr.s
-class PengRobinson78(CEOS):
+class PengRobinson(CEOS):
     """
     docstring here
         :param CEOS: 
@@ -157,6 +157,23 @@ class PengRobinson78(CEOS):
         ln_phi = first_term - second_term + third_term * fourth_term
 
         return np.exp(ln_phi)
+
+
+@attr.s
+class PengRobinson78(PengRobinson):
+    """
+    docstring here
+        :param CEOS:
+    """
+
+    @property
+    def m(self):
+        omega = self.mixture.acentric_factor
+        m_low = 0.37464 + 1.54226 * omega - 0.26992 * omega * omega
+        m_high = 0.3796 + 1.485 * omega - 0.1644 * omega * omega \
+            + 0.01667 * omega * omega * omega
+        m_value = np.where(self.mixture.acentric_factor > 0.49, m_high, m_low)
+        return m_value
 
 
 @attr.s
