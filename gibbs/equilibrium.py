@@ -1,3 +1,59 @@
+r"""
+This module contains all the equilibrium calculations according to the explained by [1]_ and [2]_. It solves the
+constrained optimization problem:
+
+.. math::
+    \min\,\overline{G} = \sum_{i = 1}^{np} \sum_{j = 1}^{nc} n_{ij} \ln{f_{ij}(\mathbf{x}_{i})}
+
+subject to
+
+.. math::
+    0 \leq n_{ij} \leq n_{feed}
+
+where np and nc means number of phases and number of components, respectively.
+
+Following [2]_, the problem's decision variable is changed for a proper choice which automatically solves material
+balance. To do so, a :math:`\beta` is introduced as decision variable such that
+
+.. math::
+    n_{1j} = \beta_{1j} z_j F, \qquad j = 1, 2, \ldots, nc
+
+    n_{kj} = \beta_{kj} \left(z_j F - \sum_{i = 1}^{k - 1} n_{ij}\right), \qquad k = 2, 3, \ldots, np - 1, \quad
+    j = 1, 2, \ldots, nc
+
+    n_{kj} = z_j F - \sum_{i = 1}^{k - 1} n_{ij}, \qquad k = np, j = 1, 2, \ldots, nc
+
+where :math:`F` denotes the feed rate, which will be referred here as the molar base for calculations and :math:`z` is
+the feed (or overall) composition. Given :math:`\beta` after the minimization procedure, the number of moles of each
+component in each phase is obtained by the formulas provided above. With the number of moles, phase molar fractions and
+component molar fractions are then calculated as
+
+* Phase fractions (:math:`\alpha`):
+
+    .. math::
+        \alpha_i = \dfrac{\sum_{j = 1}^{nc} n_{ij}}{F}, \qquad i = 1, 2, \ldots, np
+
+* Component molar fractions:
+
+    .. math::
+        X \equiv x_ij =  \dfrac{n_{ij}}{\sum_{l = 1}^{nc} x_{il}}, \qquad i = 1, 2, \ldots, np,
+        \quad j = 1, 2, \ldots, nc
+
+References
+------------
+
+.. [1] Nichita, D. V., Gomez, S., and Luna, E. (2002). Multiphase equilibria calculation by direct minimization of Gibbs
+    free energy with a global optimization method. Computers & chemical engineering, 26(12), 1703-1724.
+
+.. [2] Srinivas, M., and Rangaiah, G. P. (2007). Differential evolution with tabu list for global optimization and its
+    application to phase equilibrium and parameter estimation problems. Industrial & engineering chemistry research,
+    46(10), 3410-3421.
+
+.. module:: equilibrium
+   :platform: Unix, Windows and Mac
+   :synopsis: Equilibrium calculations (compositions and phase distributions).
+.. moduleauthor:: Diego T. Volpatto <dtvolpatto@gmail.com>
+"""
 import attr
 import numpy as np
 
@@ -8,6 +64,9 @@ from scipy.optimize import differential_evolution as de
 class ResultEquilibrium:
     """
     Class for storage the results from equilibrium calculations.
+
+    Attributes
+    ----------
 
     :param F:
         Phase molar fractions.
@@ -27,10 +86,13 @@ class ResultEquilibrium:
 
 
 def calculate_equilibrium(model, P, T, z, number_of_trial_phases=3, molar_base=1, strategy='best1bin', popsize=30,
-    recombination=0.95, mutation=0.7, tol=1e-5, seed=np.random.RandomState(),
-    workers=1, monitor=False, polish=False):
+    recombination=0.5, mutation=0.2, tol=1e-5, seed=np.random.RandomState(),
+    workers=1, monitor=False, polish=True):
     """
     Given a mixture modeled by an EoS at a known PT-conditions, calculate the thermodynamical equilibrium.
+
+    Parameters
+    ----------
 
     :param model:
     :param P:
@@ -117,6 +179,9 @@ def _calculate_gibbs_free_energy_reduced(
     Calculates the reduced Gibbs free energy. This function is used as objective function in the minimization procedure
     for equilibrium calculations.
 
+    Parameters
+    ----------
+
     :param numpy.ndarray N:
         TODO: update this argument
         Vector ordered component molar amount for each component, arranged in terms of phases. This array must
@@ -163,6 +228,9 @@ def _transform_vector_data_in_matrix(N, number_of_components, number_of_phases):
     Given a vector N containing ordered component molar amount for each component, arranged in terms of phases,
     return a matrix where its lines represents phases and columns are the components. In more details,
     N = (n_1, n_2, ..., n_np)^T, where n_j here is the molar composition vector for each component in the phase j.
+
+    Parameters
+    ----------
 
     :param numpy.ndarray N:
         :func:`See here <gibbs.equilibrium.calculate_gibbs_free_energy_reduced>`.
@@ -218,6 +286,9 @@ def _normalize_phase_molar_amount_to_fractions(
     n_ij, number_of_phases, tol=1e-5):
     """
     Converts the component molar amount matrix entries to molar fractions.
+
+    Parameters
+    ----------
 
     :param numpy.ndarray n_ij:
         :func:`See here <gibbs.equilibrium.calculate_gibbs_free_energy_reduced>`.
