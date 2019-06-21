@@ -31,7 +31,7 @@ component molar fractions are then calculated as
 * Phase fractions (:math:`\alpha`):
 
     .. math::
-        \alpha_i = \dfrac{\sum_{j = 1}^{nc} n_{ij}}{F}, \qquad i = 1, 2, \ldots, np
+        F_i = \dfrac{\sum_{j = 1}^{nc} n_{ij}}{F}, \qquad i = 1, 2, \ldots, np
 
 * Component molar fractions:
 
@@ -82,12 +82,11 @@ class ResultEquilibrium:
     """
     F = attr.ib(type=np.array)
     X = attr.ib(type=np.array)
-    num_of_phases = float
+    num_of_phases = int
 
 
-def calculate_equilibrium(model, P, T, z, number_of_trial_phases=3, molar_base=1, strategy='best1bin', popsize=30,
-    recombination=0.5, mutation=0.2, tol=1e-5, seed=np.random.RandomState(),
-    workers=1, monitor=False, polish=True):
+def calculate_equilibrium(model, P, T, z, number_of_trial_phases=3, molar_base=1.0, strategy='best1bin',
+    recombination=0.5, mutation=0.3, tol=1e-5, seed=np.random.RandomState(), workers=1, monitor=False, polish=True):
     """
     Given a mixture modeled by an EoS at a known PT-conditions, calculate the thermodynamical equilibrium.
 
@@ -100,8 +99,8 @@ def calculate_equilibrium(model, P, T, z, number_of_trial_phases=3, molar_base=1
     :param numpy.ndarray z:
         Mixture overall composition.
     :param number_of_trial_phases:
+    :param molar_base:
     :param strategy:
-    :param popsize:
     :param recombination:
     :param mutation:
     :param tol:
@@ -115,10 +114,6 @@ def calculate_equilibrium(model, P, T, z, number_of_trial_phases=3, molar_base=1
         phases.
     :rtype: ResultEquilibrium
     """
-    if popsize <= 0:
-        raise ValueError('Number of individuals must be greater than 0.')
-    if type(popsize) != int:
-        raise TypeError('Population size must be an integer number.')
     if not 0 < recombination <= 1:
         raise ValueError('Recombination must be a value between 0 and 1.')
     if type(mutation) == tuple:
@@ -138,14 +133,19 @@ def calculate_equilibrium(model, P, T, z, number_of_trial_phases=3, molar_base=1
         raise ValueError('Tolerance must be a positive float.')
 
     n_components = model.number_of_components
-    search_space = [(0, 1)] * n_components * (number_of_trial_phases - 1)
+    number_of_decision_variables = n_components * (number_of_trial_phases - 1)
+    search_space = [(0, 1)] * number_of_decision_variables
+
+    population_size = 40 * number_of_decision_variables
+    if population_size > 120:
+        population_size = 120
 
     result = de(
         _calculate_gibbs_free_energy_reduced,
         bounds=search_space,
         args=[n_components, number_of_trial_phases, model, P, T, z, molar_base],
         strategy=strategy,
-        popsize=popsize * n_components * (number_of_trial_phases - 1),
+        popsize=population_size,  # * n_components * (number_of_trial_phases - 1), TODO: check if this would be appropriate
         recombination=recombination,
         mutation=mutation,
         tol=tol,
