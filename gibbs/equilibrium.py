@@ -68,19 +68,19 @@ class ResultEquilibrium:
     Members
     ----------
 
-    :param numpy.ndarray F:
+    :ivar numpy.ndarray F:
         Phase molar fractions.
 
-    :param numpy.ndarray X:
+    :ivar numpy.ndarray X:
         Component molar fractions in each phase.
 
-    :param float reduced_gibbs_free_energy:
+    :ivar float reduced_gibbs_free_energy:
         Reduced Gibbs free energy minimum.
 
-    :param int number_of_phases:
+    :ivar int number_of_phases:
         Number of present phases.
 
-    :param str status:
+    :ivar str status:
         Status of succeed or failure according to the outcome of phase equilibrium calculation.
     """
     F = attr.ib(type=np.array)
@@ -91,7 +91,7 @@ class ResultEquilibrium:
 
 
 def calculate_equilibrium(model, P, T, z, number_of_trial_phases=3, compare_trial_phases=False, molar_base=1.0,
-    strategy='best1bin', recombination=0.3, mutation=0.5, tol=1e-5, seed=np.random.RandomState(), workers=1,
+    strategy='best1bin', recombination=0.3, mutation=0.6, tol=1e-5, seed=np.random.RandomState(), workers=1,
     monitor=False, polish=True):
     """
     Given a mixture modeled by an EoS at a known PT-conditions, calculate the thermodynamical equilibrium.
@@ -191,9 +191,7 @@ def calculate_equilibrium(model, P, T, z, number_of_trial_phases=3, compare_tria
         number_of_decision_variables = number_of_components * (number_of_trial_phases - 1)
         search_space = [(0, 1)] * number_of_decision_variables
 
-        population_size = 40 * number_of_decision_variables
-        if population_size > 120:
-            population_size = 120
+        population_size = _define_differential_evolution_population_size(number_of_decision_variables)
 
         result = de(
             _calculate_gibbs_free_energy_reduced,
@@ -219,9 +217,7 @@ def calculate_equilibrium(model, P, T, z, number_of_trial_phases=3, compare_tria
             number_of_decision_variables = number_of_components * (current_number_of_trial_phase - 1)
             search_space = [(0, 1)] * number_of_decision_variables
 
-            population_size = 40 * number_of_decision_variables
-            if population_size > 120:
-                population_size = 120
+            population_size = _define_differential_evolution_population_size(number_of_decision_variables)
 
             trial_result = de(
                 _calculate_gibbs_free_energy_reduced,
@@ -250,12 +246,12 @@ def calculate_equilibrium(model, P, T, z, number_of_trial_phases=3, compare_tria
                 n_ij_trial_solution,
                 current_number_of_trial_phase
             )
-            is_trial_phase_unphysical = _check_phase_equilibrium_break_condition(
+            is_trial_phase_nonphysical = _check_phase_equilibrium_break_condition(
                 x_ij_trial_solution,
                 previous_reduced_gibbs_energy,
                 current_reduced_gibbs_free_energy
             )
-            if is_trial_phase_unphysical and previous_reduced_gibbs_energy == np.inf:
+            if is_trial_phase_nonphysical and previous_reduced_gibbs_energy == np.inf:
                 return ResultEquilibrium(
                     F=np.nan,
                     X=np.nan,
@@ -263,7 +259,7 @@ def calculate_equilibrium(model, P, T, z, number_of_trial_phases=3, compare_tria
                     number_of_phases=1,
                     status='failure'
                 )
-            elif is_trial_phase_unphysical:
+            elif is_trial_phase_nonphysical:
                 break
             else:
                 reduced_gibbs_free_energy = current_reduced_gibbs_free_energy
@@ -532,12 +528,8 @@ def _calculate_phase_molar_fractions(N, molar_base=1.0):
 def _check_phase_equilibrium_break_condition(X, previous_reduced_gibbs_free_energy, current_reduced_gibbs_free_energy, rtol=1e-2):
     number_of_phases = X.shape[0]
 
-    is_unphysical_phase = False
+    is_nonphysical_phase = False
 
-    # if current_reduced_gibbs_free_energy > previous_reduced_gibbs_free_energy:
-    #     is_unphysical_phase = True
-    #
-    # else:
     for fixed_phase in range(number_of_phases):
         fixed_phase_composition = X[fixed_phase, :]
         for searching_phase in range(number_of_phases):
@@ -546,10 +538,25 @@ def _check_phase_equilibrium_break_condition(X, previous_reduced_gibbs_free_ener
 
             searching_phase_composition = X[searching_phase, :]
             if np.allclose(fixed_phase_composition, searching_phase_composition, rtol=rtol):
-                is_unphysical_phase = True
+                is_nonphysical_phase = True
                 break
 
-            if is_unphysical_phase:
-                break
+        if is_nonphysical_phase:
+            break
 
-    return is_unphysical_phase
+    if not is_nonphysical_phase and current_reduced_gibbs_free_energy > previous_reduced_gibbs_free_energy:
+        is_nonphysical_phase = True
+
+    return is_nonphysical_phase
+
+
+def _define_differential_evolution_population_size(
+        number_of_decision_variables,
+        population_size_for_each_variable=15,
+        total_population_size_limit=100
+):
+    population_size = population_size_for_each_variable * number_of_decision_variables
+    if population_size > total_population_size_limit:
+        population_size = total_population_size_limit
+
+    return population_size
