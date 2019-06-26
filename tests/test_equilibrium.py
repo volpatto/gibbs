@@ -119,6 +119,7 @@ def test_equilibrium_whitson_example_18(mixture_whitson, model_whitson):
     assert np.sort(result.F) == pytest.approx(np.sort(expected_F), rel=1e-2)
 
 
+@pytest.mark.skip(reason='Test takes too long to run. A new solver must be employed.')
 def test_equilibrium_nichita_ternary_mixture(mixture_nichita_ternary, model_nichita_ternary):
     T = 294.3
     P = convert_bar_to_Pa(67)
