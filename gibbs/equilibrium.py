@@ -60,7 +60,7 @@ import numpy as np
 from scipy.optimize import differential_evolution as de
 
 
-@attr.s
+@attr.s(auto_attribs=True)
 class ResultEquilibrium:
     """
     Class for storage the results from equilibrium calculations.
@@ -83,11 +83,11 @@ class ResultEquilibrium:
     :ivar str status:
         Status of succeed or failure according to the outcome of phase equilibrium calculation.
     """
-    F = attr.ib(type=np.array)
-    X = attr.ib(type=np.array)
-    reduced_gibbs_free_energy = attr.ib(type=float)
-    number_of_phases = attr.ib(type=int)
-    status = attr.ib(type=str)
+    F: np.ndarray
+    X: np.ndarray
+    reduced_gibbs_free_energy: float
+    number_of_phases: int
+    status: str
 
 
 def calculate_equilibrium(model, P, T, z, number_of_trial_phases=3, compare_trial_phases=False, molar_base=1.0,
