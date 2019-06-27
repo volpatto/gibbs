@@ -57,7 +57,7 @@ References
 import attr
 import numpy as np
 
-from scipy.optimize import differential_evolution as de
+from gibbs.minimization import OptimizationProblem, OptimizationMethod, ScipyDifferentialEvolutionSettings
 
 
 @attr.s(auto_attribs=True)
@@ -191,14 +191,9 @@ def calculate_equilibrium(model, P, T, z, number_of_trial_phases=3, compare_tria
         number_of_decision_variables = number_of_components * (number_of_trial_phases - 1)
         search_space = [(0, 1)] * number_of_decision_variables
 
-        population_size = _define_differential_evolution_population_size(number_of_decision_variables)
-
-        result = de(
-            _calculate_gibbs_free_energy_reduced,
-            bounds=search_space,
-            args=[number_of_components, number_of_trial_phases, model, P, T, z, molar_base],
+        scipy_differential_evolution_optional_args = ScipyDifferentialEvolutionSettings(
+            number_of_decision_variables=number_of_decision_variables,
             strategy=strategy,
-            popsize=population_size,
             recombination=recombination,
             mutation=mutation,
             tol=tol,
@@ -208,6 +203,15 @@ def calculate_equilibrium(model, P, T, z, number_of_trial_phases=3, compare_tria
             workers=workers
         )
 
+        optimization_problem = OptimizationProblem(
+            objective_function=_calculate_gibbs_free_energy_reduced,
+            bounds=search_space,
+            args=[number_of_components, number_of_trial_phases, model, P, T, z, molar_base],
+            optimization_method=OptimizationMethod.SCIPY_DE,
+            solver_args=scipy_differential_evolution_optional_args
+        )
+
+        result = optimization_problem.solve_minimization()
         reduced_gibbs_free_energy = result.fun
         beta_solution_vector = result.x
 
@@ -217,14 +221,9 @@ def calculate_equilibrium(model, P, T, z, number_of_trial_phases=3, compare_tria
             number_of_decision_variables = number_of_components * (current_number_of_trial_phase - 1)
             search_space = [(0, 1)] * number_of_decision_variables
 
-            population_size = _define_differential_evolution_population_size(number_of_decision_variables)
-
-            trial_result = de(
-                _calculate_gibbs_free_energy_reduced,
-                bounds=search_space,
-                args=[number_of_components, current_number_of_trial_phase, model, P, T, z, molar_base],
+            scipy_differential_evolution_optional_args = ScipyDifferentialEvolutionSettings(
+                number_of_decision_variables=number_of_decision_variables,
                 strategy=strategy,
-                popsize=population_size,
                 recombination=recombination,
                 mutation=mutation,
                 tol=tol,
@@ -233,6 +232,16 @@ def calculate_equilibrium(model, P, T, z, number_of_trial_phases=3, compare_tria
                 seed=seed,
                 workers=workers
             )
+
+            optimization_problem = OptimizationProblem(
+                objective_function=_calculate_gibbs_free_energy_reduced,
+                bounds=search_space,
+                args=[number_of_components, number_of_trial_phases, model, P, T, z, molar_base],
+                optimization_method=OptimizationMethod.SCIPY_DE,
+                solver_args=scipy_differential_evolution_optional_args
+            )
+
+            trial_result = optimization_problem.solve_minimization()
 
             beta_trial_solution_vector = trial_result.x
             current_reduced_gibbs_free_energy = trial_result.fun
@@ -548,15 +557,3 @@ def _check_phase_equilibrium_break_condition(X, previous_reduced_gibbs_free_ener
         is_nonphysical_phase = True
 
     return is_nonphysical_phase
-
-
-def _define_differential_evolution_population_size(
-        number_of_decision_variables,
-        population_size_for_each_variable=15,
-        total_population_size_limit=100
-):
-    population_size = population_size_for_each_variable * number_of_decision_variables
-    if population_size > total_population_size_limit:
-        population_size = total_population_size_limit
-
-    return population_size

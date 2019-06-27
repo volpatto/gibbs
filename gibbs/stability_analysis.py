@@ -1,6 +1,7 @@
 import numpy as np
 import attr
-from scipy.optimize import differential_evolution as de
+
+from gibbs.minimization import OptimizationProblem, OptimizationMethod, ScipyDifferentialEvolutionSettings
 
 
 @attr.s(auto_attribs=True)
@@ -40,10 +41,8 @@ def stability_test(
     search_space = [(0, 1)] * n_components
     f_z = model.fugacity(P, T, z)
 
-    result = de(
-        _reduced_tpd,
-        bounds=search_space, 
-        args=[model, P, T, f_z],
+    scipy_differential_evolution_optional_args = ScipyDifferentialEvolutionSettings(
+        number_of_decision_variables=n_components,
         strategy=strategy,
         popsize=popsize,
         recombination=recombination,
@@ -55,6 +54,15 @@ def stability_test(
         workers=workers
     )
 
+    optimization_problem = OptimizationProblem(
+        objective_function=_reduced_tpd,
+        bounds=search_space,
+        args=[model, P, T, f_z],
+        optimization_method=OptimizationMethod.SCIPY_DE,
+        solver_args=scipy_differential_evolution_optional_args
+    )
+
+    result = optimization_problem.solve_minimization()
     x = result.x / result.x.sum()
     reduced_tpd = result.fun
 

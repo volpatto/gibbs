@@ -27,6 +27,9 @@ dependencies:
   - hypothesis
   - nbval
 
+  # For documentation
+  - sphinx
+
 environment:
   PYTHONPATH:
     - {{ root }}

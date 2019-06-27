@@ -2,6 +2,7 @@
 dependencies:
 - altair
 - attrs
+- codecov
 - git
 - hypothesis
 - jupyter
@@ -19,6 +20,7 @@ dependencies:
 - python =3.6
 - scipy
 - seaborn
+- sphinx
 - sympy
 - thermo
 name: gibbs-py36
