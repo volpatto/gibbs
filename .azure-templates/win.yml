@@ -1,6 +1,6 @@
 jobs:
 - job:
-  displayName: 'Windows 2019 preview'
+  displayName: 'Windows 2019'
 
   pool:
     vmImage: 'windows-2019'
