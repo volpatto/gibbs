@@ -75,6 +75,27 @@ class ScipyDifferentialEvolutionSettings:
     def __attrs_post_init__(self):
         if self.popsize is None:
             self.popsize = self._estimate_population_size()
+        elif self.popsize <= 0:
+            raise ValueError('Number of individuals must be greater than 0.')
+        if type(self.popsize) != int:
+            raise TypeError('Population size must be an integer number.')
+        if not 0 < self.recombination <= 1:
+            raise ValueError('Recombination must be a value between 0 and 1.')
+        if type(self.mutation) == tuple:
+            mutation_dithering_array = np.array(self.mutation)
+            if len(self.mutation) > 2:
+                raise ValueError('Mutation can be a tuple with two numbers, not more.')
+            if mutation_dithering_array.min() < 0 or mutation_dithering_array.max() > 2:
+                raise ValueError('Mutation must be floats between 0 and 2.')
+            elif mutation_dithering_array.min() == mutation_dithering_array.max():
+                raise ValueError("Values for mutation dithering can't be equal.")
+        else:
+            if type(self.mutation) != int and type(self.mutation) != float:
+                raise TypeError('When mutation is provided as a single number, it must be a float or an int.')
+            if not 0 < self.mutation < 2:
+                raise ValueError('Mutation must be a number between 0 and 2.')
+        if self.tol < 0:
+            raise ValueError('Tolerance must be a positive float.')
 
     def _estimate_population_size(self):
         population_size = self.population_size_for_each_variable * self.number_of_decision_variables
@@ -86,6 +107,7 @@ class ScipyDifferentialEvolutionSettings:
 
 @attr.s(auto_attribs=True)
 class PygmoSelfAdaptiveDESettings:
+    #TODO: docs and validations
     gen: int
     popsize: int
     variant: int = 2
@@ -98,6 +120,8 @@ class PygmoSelfAdaptiveDESettings:
 
 @attr.s(auto_attribs=True)
 class PygmoOptimizationProblemWrapper:
+    #TODO: docs and validations
+
     objective_function: types.FunctionType
     bounds: list
     args: list = None
@@ -121,6 +145,8 @@ class PygmoOptimizationProblemWrapper:
 
 @attr.s(auto_attribs=True)
 class PygmoSolutionWrapper:
+    #TODO: docs and validations
+
     solution: pg.core.population
 
     @property
@@ -137,6 +163,7 @@ class OptimizationProblem:
     """
     This class stores and solve optimization problems with the available solvers.
     """
+    #TODO: docs and validations
     objective_function: types.FunctionType
     bounds: list
     optimization_method: OptimizationMethod
