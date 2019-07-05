@@ -124,13 +124,15 @@ class PygmoOptimizationProblemWrapper:
 
     objective_function: types.FunctionType
     bounds: list
-    args: list = None
+    args: list = []
 
     def fitness(self, x):
-        if self.args is None:
-            return [self.objective_function(x)]
-        else:
-            return [self.objective_function(x, *self.args)]
+        return [self.objective_function(x, *self.args)]
+    # def fitness(self, x):
+    #     if self.args is None:
+    #         return [self.objective_function(x)]
+    #     else:
+    #         return [self.objective_function(x, *self.args)]
 
     def get_bounds(self):
         return self._transform_bounds_to_pygmo_standard
@@ -145,7 +147,7 @@ class PygmoOptimizationProblemWrapper:
 
 @attr.s(auto_attribs=True)
 class PygmoSolutionWrapper:
-    #TODO: docs and validations
+    # TODO: docs and validations
 
     solution: pg.core.population
 
@@ -168,7 +170,7 @@ class OptimizationProblem:
     bounds: list
     optimization_method: OptimizationMethod
     solver_args: Union[ScipyDifferentialEvolutionSettings, PygmoSelfAdaptiveDESettings]
-    args: list = None
+    args: list = []
 
     def __attrs_post_init__(self):
         if self.optimization_method == OptimizationMethod.SCIPY_DE and self.solver_args is None:
