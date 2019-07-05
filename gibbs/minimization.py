@@ -85,8 +85,9 @@ class ScipyDifferentialEvolutionSettings:
 
 
 @attr.s(auto_attribs=True)
-class PygmoSelfAdaptativeDESettings:
+class PygmoSelfAdaptiveDESettings:
     gen: int
+    popsize: int
     variant: int = 2
     variant_adptv: int = 1
     ftol: float = 1e-6
@@ -119,15 +120,28 @@ class PygmoOptimizationProblemWrapper:
 
 
 @attr.s(auto_attribs=True)
+class PygmoSolutionWrapper:
+    solution: pg.core.population
+
+    @property
+    def fun(self):
+        return self.solution.champion_f
+
+    @property
+    def x(self):
+        return self.solution.champion_x
+
+
+@attr.s(auto_attribs=True)
 class OptimizationProblem:
     """
     This class stores and solve optimization problems with the available solvers.
     """
     objective_function: types.FunctionType
     bounds: list
-    args: list
     optimization_method: OptimizationMethod
-    solver_args: ScipyDifferentialEvolutionSettings = None
+    solver_args: Union[ScipyDifferentialEvolutionSettings, PygmoSelfAdaptiveDESettings]
+    args: list = None
 
     def __attrs_post_init__(self):
         if self.optimization_method == OptimizationMethod.SCIPY_DE and self.solver_args is None:
@@ -154,7 +168,27 @@ class OptimizationProblem:
                 workers=self.solver_args.workers
             )
             return result
+
         elif self.optimization_method == OptimizationMethod.PYGMO_SADE:
-            raise NotImplementedError('Unavailable optimization method.')
+            problem_wrapper = PygmoOptimizationProblemWrapper(
+                objective_function=self.objective_function,
+                bounds=self.bounds,
+                args=self.args
+            )
+            pygmo_algorithm = pg.algorithm(pg.sade(
+                gen=self.solver_args.gen,
+                variant=self.solver_args.variant,
+                variant_adptv=self.solver_args.variant_adptv,
+                ftol=self.solver_args.ftol,
+                xtol=self.solver_args.xtol,
+                memory=self.solver_args.memory,
+                seed=self.solver_args.seed
+
+            ))
+            pygmo_problem = pg.problem(problem_wrapper)
+            pop = pg.population(pygmo_problem, self.solver_args.popsize)
+            solution = pygmo_algorithm.evolve(pop)
+            solution_wrapper = PygmoSolutionWrapper(solution)
+            return solution_wrapper
         else:
             raise NotImplementedError('Unavailable optimization method.')
