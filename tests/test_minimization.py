@@ -1,5 +1,6 @@
 import pytest
 import pygmo as pg
+import numpy as np
 
 from gibbs.minimization import PygmoOptimizationProblemWrapper, PygmoSelfAdaptativeDESettings
 
@@ -22,18 +23,18 @@ def f_rosenbrock(x):
     return f
 
 
-@pytest.mark.parametrize("problem_dimension", [2, 3, 4])
+@pytest.mark.parametrize("problem_dimension", range(2, 8))
 def test_pygmo_rosenbrock_minimization(problem_dimension):
     bounds = problem_dimension * [[-6, 6]]
     problem_wrapper = PygmoOptimizationProblemWrapper(
         objective_function=f_rosenbrock,
         bounds=bounds
     )
-    algo = pg.algorithm(pg.sade(gen=500))
+    algo = pg.algorithm(pg.sade(gen=1000, xtol=1e-8))
     prob = pg.problem(problem_wrapper)
     pop = pg.population(prob, 20)
-    pop = algo.evolve(pop)
+    solution = algo.evolve(pop)
 
-    uda = algo.extract(pg.sade)
-    print(uda.get_log())
-    assert True
+    sol_x = solution.champion_x
+
+    assert pytest.approx(np.ones(problem_dimension), rel=1e-3) == sol_x

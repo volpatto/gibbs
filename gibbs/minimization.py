@@ -112,7 +112,7 @@ class PygmoOptimizationProblemWrapper:
 
     @property
     def _transform_bounds_to_pygmo_standard(self):
-        bounds_numpy = np.array(self.bounds)
+        bounds_numpy = np.array(self.bounds, dtype=np.float64)
         lower_bounds = list(bounds_numpy[:, 0])
         upper_bounds = list(bounds_numpy[:, 1])
         return lower_bounds, upper_bounds
