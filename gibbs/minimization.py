@@ -110,11 +110,11 @@ class PygmoSelfAdaptiveDESettings:
     #TODO: docs and validations
     gen: int
     popsize: int
-    variant: int = 2
-    variant_adptv: int = 1
+    variant: int = 7
+    variant_adptv: int = 2
     ftol: float = 1e-6
     xtol: float = 1e-6
-    memory: bool = False
+    memory: bool = True
     seed: int = np.random.randint(0, 2000)
 
 
