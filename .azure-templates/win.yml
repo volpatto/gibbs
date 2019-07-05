@@ -1,9 +1,9 @@
 jobs:
 - job:
-  displayName: Windows vs2015
+  displayName: 'Windows 2019 preview'
 
   pool:
-    vmImage: 'vs2015-win2012r2'
+    vmImage: 'windows-2019'
   strategy:
     matrix:
       Python36:
