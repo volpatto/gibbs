@@ -25,6 +25,7 @@ jobs:
     displayName: 'Configuring conda'
 
   - script: |
+      conda info -a
       conda devenv
     displayName: 'Running conda devenv'
 
