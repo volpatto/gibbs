@@ -115,7 +115,7 @@ class PygmoSelfAdaptiveDESettings:
     ftol: float = 1e-6
     xtol: float = 1e-6
     memory: bool = True
-    seed: int = np.random.randint(0, 2000)
+    seed: int = int(np.random.randint(0, 2000))
 
 
 @attr.s(auto_attribs=True)
@@ -202,18 +202,23 @@ class OptimizationProblem:
                 bounds=self.bounds,
                 args=self.args
             )
-            pygmo_algorithm = pg.algorithm(pg.sade(
-                gen=self.solver_args.gen,
-                variant=self.solver_args.variant,
-                variant_adptv=self.solver_args.variant_adptv,
-                ftol=self.solver_args.ftol,
-                xtol=self.solver_args.xtol,
-                memory=self.solver_args.memory,
-                seed=self.solver_args.seed
-
-            ))
+            pygmo_algorithm = pg.algorithm(
+                pg.sade(
+                    gen=self.solver_args.gen,
+                    variant=self.solver_args.variant,
+                    variant_adptv=self.solver_args.variant_adptv,
+                    ftol=self.solver_args.ftol,
+                    xtol=self.solver_args.xtol,
+                    memory=self.solver_args.memory,
+                    seed=self.solver_args.seed
+                )
+            )
             pygmo_problem = pg.problem(problem_wrapper)
-            pop = pg.population(pygmo_problem, self.solver_args.popsize)
+            pop = pg.population(
+                prob=pygmo_problem,
+                size=self.solver_args.popsize,
+                seed=self.solver_args.seed
+            )
             solution = pygmo_algorithm.evolve(pop)
             solution_wrapper = PygmoSolutionWrapper(solution)
             return solution_wrapper

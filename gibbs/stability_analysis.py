@@ -17,8 +17,11 @@ def stability_test(
     solver_args=PygmoSelfAdaptiveDESettings(200, 50), rtol=1e-3
 ):
 
+    if rtol < 0:
+        raise ValueError('Tolerance must be a positive float.')
+
     n_components = model.number_of_components
-    search_space = [(0, 1)] * n_components
+    search_space = [(0., 1.)] * n_components
     f_z = model.fugacity(P, T, z)
 
     optimization_problem = OptimizationProblem(

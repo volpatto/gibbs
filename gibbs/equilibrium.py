@@ -57,7 +57,8 @@ References
 import attr
 import numpy as np
 
-from gibbs.minimization import OptimizationProblem, OptimizationMethod, ScipyDifferentialEvolutionSettings
+from gibbs.minimization import OptimizationProblem, OptimizationMethod
+from gibbs.minimization import PygmoSelfAdaptiveDESettings
 
 
 @attr.s(auto_attribs=True)
@@ -90,9 +91,9 @@ class ResultEquilibrium:
     status: str
 
 
-def calculate_equilibrium(model, P, T, z, number_of_trial_phases=3, compare_trial_phases=False, molar_base=1.0,
-    strategy='best1bin', recombination=0.3, mutation=0.6, tol=1e-5, seed=np.random.RandomState(), workers=1,
-    monitor=False, polish=True):
+def calculate_equilibrium(model, P, T, z, number_of_trial_phases=3, compare_trial_phases=False,
+    molar_base=1.0, optimization_method=OptimizationMethod.PYGMO_SADE,
+    solver_args=PygmoSelfAdaptiveDESettings(500, 120)):
     """
     Given a mixture modeled by an EoS at a known PT-conditions, calculate the thermodynamical equilibrium.
 
@@ -121,42 +122,6 @@ def calculate_equilibrium(model, P, T, z, number_of_trial_phases=3, compare_tria
     :param float molar_base:
         Molar feed rate or molar base.
 
-    :param str strategy:
-        The differential evolution strategy to use. Should be one of: - 'best1bin' - 'best1exp' - 'rand1exp' -
-        'randtobest1exp' - 'currenttobest1exp' - 'best2exp' - 'rand2exp' - 'randtobest1bin' - 'currenttobest1bin' -
-        'best2bin' - 'rand2bin' - 'rand1bin' The default is 'best1bin'.
-
-    :param float recombination:
-        The recombination constant, should be in the range [0, 1]. In the literature this is also known as the crossover
-        probability, being denoted by CR. Increasing this value allows a larger number of mutants to progress into the
-        next generation, but at the risk of population stability.
-
-    :param float mutation:
-        The mutation constant. In the literature this is also known as differential weight, being denoted by F. If
-        specified as a float it should be in the range [0, 2].
-
-    :param float tol:
-        Relative tolerance for convergence, the solving stops when `np.std(pop) = atol + tol * np.abs(np.mean(population_energies))`,
-        where and `atol` and `tol` are the absolute and relative tolerance respectively.
-
-    :param int|numpy.random.RandomState seed:
-        If `seed` is not specified the `np.RandomState` singleton is used. If `seed` is an int, a new
-        `np.random.RandomState` instance is used, seeded with seed. If `seed` is already a `np.random.RandomState instance`,
-        then that `np.random.RandomState` instance is used. Specify `seed` for repeatable minimizations.
-
-    :param int workers:
-        If `workers` is an int the population is subdivided into `workers` sections and evaluated in parallel
-        (uses `multiprocessing.Pool`). Supply -1 to use all available CPU cores. Alternatively supply a map-like
-        callable, such as `multiprocessing.Pool.map` for evaluating the population in parallel. This evaluation is
-        carried out as `workers(func, iterable)`.
-
-    :param bool monitor:
-        Display status messages during optimization iterations.
-
-    :param polish:
-        If True (default), then `scipy.optimize.minimize` with the `L-BFGS-B` method is used to polish the best
-        population member at the end, which can improve the minimization slightly.
-
     :return:
         The equilibrium result, providing the phase molar fractions, compositions in each phase and number of
         phases.
@@ -166,49 +131,20 @@ def calculate_equilibrium(model, P, T, z, number_of_trial_phases=3, compare_tria
         raise ValueError("Invalid number of trial phases: input must be equal or greater than two trial phases.")
     if number_of_trial_phases > 4:
         raise ValueError("Number of trial phases is too large. The limit is four trial phases.")
-    if not 0 < recombination <= 1:
-        raise ValueError('Recombination must be a value between 0 and 1.')
-    if type(mutation) == tuple:
-        mutation_dithering_array = np.array(mutation)
-        if len(mutation) > 2:
-            raise ValueError('Mutation can be a tuple with two numbers, not more.')
-        if mutation_dithering_array.min() < 0 or mutation_dithering_array.max() > 2:
-            raise ValueError('Mutation must be floats between 0 and 2.')
-        elif mutation_dithering_array.min() == mutation_dithering_array.max():
-            raise ValueError("Values for mutation dithering can't be equal.")
-    else:
-        if type(mutation) != int and type(mutation) != float:
-            raise TypeError('When mutation is provided as a single number, it must be a float or an int.')
-        if not 0 < mutation < 2:
-            raise ValueError('Mutation must be a number between 0 and 2.')
-    if tol < 0:
-        raise ValueError('Tolerance must be a positive float.')
 
     number_of_components = model.number_of_components
     number_of_phases = number_of_trial_phases
 
     if number_of_trial_phases == 2 or not compare_trial_phases:
         number_of_decision_variables = number_of_components * (number_of_trial_phases - 1)
-        search_space = [(0, 1)] * number_of_decision_variables
-
-        scipy_differential_evolution_optional_args = ScipyDifferentialEvolutionSettings(
-            number_of_decision_variables=number_of_decision_variables,
-            strategy=strategy,
-            recombination=recombination,
-            mutation=mutation,
-            tol=tol,
-            disp=monitor,
-            polish=polish,
-            seed=seed,
-            workers=workers
-        )
+        search_space = [(0., 1.)] * number_of_decision_variables
 
         optimization_problem = OptimizationProblem(
             objective_function=_calculate_gibbs_free_energy_reduced,
             bounds=search_space,
             args=[number_of_components, number_of_trial_phases, model, P, T, z, molar_base],
-            optimization_method=OptimizationMethod.SCIPY_DE,
-            solver_args=scipy_differential_evolution_optional_args
+            optimization_method=optimization_method,
+            solver_args=solver_args
         )
 
         result = optimization_problem.solve_minimization()
@@ -219,26 +155,14 @@ def calculate_equilibrium(model, P, T, z, number_of_trial_phases=3, compare_tria
         previous_reduced_gibbs_energy = np.inf
         for current_number_of_trial_phase in range(2, number_of_trial_phases + 1):
             number_of_decision_variables = number_of_components * (current_number_of_trial_phase - 1)
-            search_space = [(0, 1)] * number_of_decision_variables
-
-            scipy_differential_evolution_optional_args = ScipyDifferentialEvolutionSettings(
-                number_of_decision_variables=number_of_decision_variables,
-                strategy=strategy,
-                recombination=recombination,
-                mutation=mutation,
-                tol=tol,
-                disp=monitor,
-                polish=polish,
-                seed=seed,
-                workers=workers
-            )
+            search_space = [(0., 1.)] * number_of_decision_variables
 
             optimization_problem = OptimizationProblem(
                 objective_function=_calculate_gibbs_free_energy_reduced,
                 bounds=search_space,
                 args=[number_of_components, number_of_trial_phases, model, P, T, z, molar_base],
-                optimization_method=OptimizationMethod.SCIPY_DE,
-                solver_args=scipy_differential_evolution_optional_args
+                optimization_method=optimization_method,
+                solver_args=solver_args
             )
 
             trial_result = optimization_problem.solve_minimization()
@@ -298,7 +222,7 @@ def calculate_equilibrium(model, P, T, z, number_of_trial_phases=3, compare_tria
 
 
 def _calculate_gibbs_free_energy_reduced(
-    beta_vector, number_of_components, number_of_phases, model, P, T, z, molar_base=1
+    beta_vector, number_of_components, number_of_phases, model, P, T, z, molar_base=1.0
 ):
     """
     Calculates the reduced Gibbs free energy. This function is used as objective function in the minimization procedure
@@ -345,7 +269,7 @@ def _calculate_gibbs_free_energy_reduced(
 
     reduced_gibbs_free_energy = np.tensordot(n_ij, ln_f_matrix)
 
-    return reduced_gibbs_free_energy
+    return float(reduced_gibbs_free_energy)
 
 
 def _transform_vector_data_in_matrix(N, number_of_components, number_of_phases):
