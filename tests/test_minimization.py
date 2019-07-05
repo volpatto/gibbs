@@ -1,8 +1,7 @@
 import pytest
-import pygmo as pg
 import numpy as np
 
-from gibbs.minimization import PygmoOptimizationProblemWrapper, PygmoSelfAdaptiveDESettings, OptimizationProblem
+from gibbs.minimization import PygmoSelfAdaptiveDESettings, OptimizationProblem
 from gibbs.minimization import OptimizationMethod
 
 

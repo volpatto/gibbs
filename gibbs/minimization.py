@@ -93,7 +93,7 @@ class PygmoSelfAdaptiveDESettings:
     ftol: float = 1e-6
     xtol: float = 1e-6
     memory: bool = False
-    seed: Union[np.random.RandomState, int] = np.random.RandomState()
+    seed: int = np.random.randint(0, 2000)
 
 
 @attr.s(auto_attribs=True)
