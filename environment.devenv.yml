@@ -23,6 +23,7 @@ dependencies:
   - pytest
   - pytest-lazy-fixture
   - pytest-cov
+  - pytest-xdist
   - codecov
   - hypothesis
   - nbval

@@ -17,6 +17,7 @@ dependencies:
 - pytest
 - pytest-cov
 - pytest-lazy-fixture
+- pytest-xdist
 - python =3.6
 - scipy
 - seaborn

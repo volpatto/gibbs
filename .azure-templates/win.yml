@@ -30,7 +30,7 @@ jobs:
 
   - script: |
       call activate gibbs-py$(py_version)
-      pytest --cov-config=.coveragerc --junitxml=junit/test-results.xml --cov-report=xml --cov-report=html --cov=gibbs
+      pytest -n auto --cov-config=.coveragerc --junitxml=junit/test-results.xml --cov-report=xml --cov-report=html --cov=gibbs
       cd notebooks
       pytest --nbval
     displayName: 'Tests'

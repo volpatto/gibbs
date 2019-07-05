@@ -32,7 +32,7 @@ install:
   - source $CONDA_BIN/activate gibbs-py$PY_VERSION
 
 script:
-  - pytest --cov-config=.coveragerc --cov-report xml --cov=gibbs
+  - pytest -n auto --cov-config=.coveragerc --cov-report xml --cov=gibbs
   - cd $GIBBS_NOTEBOOKS_DIR; pytest --nbval
 
 after_script:
