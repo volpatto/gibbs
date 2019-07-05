@@ -4,6 +4,7 @@ from typing import Union
 from enum import Enum
 import numpy as np
 from scipy.optimize import differential_evolution
+import pygmo as pg
 
 
 class OptimizationMethod(Enum):
@@ -11,6 +12,7 @@ class OptimizationMethod(Enum):
     Available optimization solvers.
     """
     SCIPY_DE = 1
+    PYGMO_SADE = 2
 
 
 @attr.s(auto_attribs=True)
@@ -83,6 +85,40 @@ class ScipyDifferentialEvolutionSettings:
 
 
 @attr.s(auto_attribs=True)
+class PygmoSelfAdaptativeDESettings:
+    gen: int
+    variant: int = 2
+    variant_adptv: int = 1
+    ftol: float = 1e-6
+    xtol: float = 1e-6
+    memory: bool = False
+    seed: Union[np.random.RandomState, int] = np.random.RandomState()
+
+
+@attr.s(auto_attribs=True)
+class PygmoOptimizationProblemWrapper:
+    objective_function: types.FunctionType
+    bounds: list
+    args: list = None
+
+    def fitness(self, x):
+        if self.args is None:
+            return [self.objective_function(x)]
+        else:
+            return [self.objective_function(x, *self.args)]
+
+    def get_bounds(self):
+        return self._transform_bounds_to_pygmo_standard
+
+    @property
+    def _transform_bounds_to_pygmo_standard(self):
+        bounds_numpy = np.array(self.bounds)
+        lower_bounds = list(bounds_numpy[:, 0])
+        upper_bounds = list(bounds_numpy[:, 1])
+        return lower_bounds, upper_bounds
+
+
+@attr.s(auto_attribs=True)
 class OptimizationProblem:
     """
     This class stores and solve optimization problems with the available solvers.
@@ -118,5 +154,7 @@ class OptimizationProblem:
                 workers=self.solver_args.workers
             )
             return result
+        elif self.optimization_method == OptimizationMethod.PYGMO_SADE:
+            raise NotImplementedError('Unavailable optimization method.')
         else:
             raise NotImplementedError('Unavailable optimization method.')
