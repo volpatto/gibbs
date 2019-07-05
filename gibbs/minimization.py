@@ -107,7 +107,7 @@ class ScipyDifferentialEvolutionSettings:
 
 @attr.s(auto_attribs=True)
 class PygmoSelfAdaptiveDESettings:
-    #TODO: docs and validations
+    # TODO: docs and validations
     gen: int
     popsize: int
     variant: int = 7
@@ -120,7 +120,7 @@ class PygmoSelfAdaptiveDESettings:
 
 @attr.s(auto_attribs=True)
 class PygmoOptimizationProblemWrapper:
-    #TODO: docs and validations
+    # TODO: docs and validations
 
     objective_function: types.FunctionType
     bounds: list
