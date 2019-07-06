@@ -94,7 +94,7 @@ class ResultEquilibrium:
 def calculate_equilibrium(
     model, P, T, z, number_of_trial_phases=3, compare_trial_phases=False,
     molar_base=1.0, optimization_method=OptimizationMethod.PYGMO_DE1220,
-    solver_args=PygmoSelfAdaptiveDESettings(10, 250)
+    solver_args=PygmoSelfAdaptiveDESettings(15, 250)
 ):
     """
     Given a mixture modeled by an EoS at a known PT-conditions, calculate the thermodynamical equilibrium.
