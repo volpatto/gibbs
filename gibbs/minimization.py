@@ -116,6 +116,9 @@ class PygmoSelfAdaptiveDESettings:
     xtol: float = 1e-6
     memory: bool = True
     seed: int = int(np.random.randint(0, 2000))
+    parallel_execution: bool = False
+    number_of_islands: int = 4
+    archipelago_gen: int = 50
 
 
 @attr.s(auto_attribs=True)
@@ -128,11 +131,6 @@ class PygmoOptimizationProblemWrapper:
 
     def fitness(self, x):
         return [self.objective_function(x, *self.args)]
-    # def fitness(self, x):
-    #     if self.args is None:
-    #         return [self.objective_function(x)]
-    #     else:
-    #         return [self.objective_function(x, *self.args)]
 
     def get_bounds(self):
         return self._transform_bounds_to_pygmo_standard
@@ -146,7 +144,7 @@ class PygmoOptimizationProblemWrapper:
 
 
 @attr.s(auto_attribs=True)
-class PygmoSolutionWrapper:
+class PygmoSolutionWrapperSerial:
     # TODO: docs and validations
 
     solution: pg.core.population
@@ -161,11 +159,27 @@ class PygmoSolutionWrapper:
 
 
 @attr.s(auto_attribs=True)
+class PygmoSolutionWrapperParallel:
+    # TODO: docs and validations
+
+    champion_x: np.ndarray
+    champion_f: Union[float, np.float64, np.ndarray]
+
+    @property
+    def fun(self):
+        return self.champion_f
+
+    @property
+    def x(self):
+        return self.champion_x
+
+
+@attr.s(auto_attribs=True)
 class OptimizationProblem:
     """
     This class stores and solve optimization problems with the available solvers.
     """
-    #TODO: docs and validations
+    # TODO: docs and validations
     objective_function: types.FunctionType
     bounds: list
     optimization_method: OptimizationMethod
@@ -216,13 +230,47 @@ class OptimizationProblem:
                 )
             )
             pygmo_problem = pg.problem(problem_wrapper)
-            pop = pg.population(
-                prob=pygmo_problem,
-                size=self.solver_args.popsize,
-                seed=self.solver_args.seed
-            )
-            solution = pygmo_algorithm.evolve(pop)
-            solution_wrapper = PygmoSolutionWrapper(solution)
-            return solution_wrapper
+
+            if self.solver_args.parallel_execution:
+                solution_wrapper = self._run_pygmo_parallel(
+                    pygmo_algorithm,
+                    pygmo_problem,
+                    number_of_islands=self.solver_args.number_of_islands,
+                    archipelago_gen=self.solver_args.archipelago_gen
+                )
+                return solution_wrapper
+            else:
+                solution_wrapper = self._run_pygmo_serial(pygmo_algorithm, pygmo_problem)
+                return solution_wrapper
+
         else:
             raise NotImplementedError('Unavailable optimization method.')
+
+    @staticmethod
+    def _select_best_pygmo_archipelago_solution(champions_x, champions_f):
+        best_index = np.argmin(champions_f)
+        return champions_x[best_index], champions_f[best_index]
+
+    def _run_pygmo_parallel(self, algorithm, problem, number_of_islands=2, archipelago_gen=50):
+        pygmo_archipelago = pg.archipelago(
+            n=number_of_islands,
+            algo=algorithm,
+            prob=problem,
+            pop_size=self.solver_args.popsize,
+            seed=self.solver_args.seed
+        )
+        pygmo_archipelago.evolve(n=archipelago_gen)
+        pygmo_archipelago.wait()
+        champions_x = pygmo_archipelago.get_champions_x()
+        champions_f = pygmo_archipelago.get_champions_f()
+        champion_x, champion_f = self._select_best_pygmo_archipelago_solution(champions_x, champions_f)
+        return PygmoSolutionWrapperParallel(champion_x=champion_x, champion_f=champion_f)
+
+    def _run_pygmo_serial(self, algorithm, problem):
+        population = pg.population(
+            prob=problem,
+            size=self.solver_args.popsize,
+            seed=self.solver_args.seed
+        )
+        solution = algorithm.evolve(population)
+        return PygmoSolutionWrapperSerial(solution)
