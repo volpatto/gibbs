@@ -118,7 +118,7 @@ class PygmoSelfAdaptiveDESettings:
     memory: bool = True
     seed: int = int(np.random.randint(0, 2000))
     parallel_execution: bool = False
-    number_of_islands: int = 4
+    number_of_islands: int = 2
     archipelago_gen: int = 50
 
 
