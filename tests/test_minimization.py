@@ -4,6 +4,8 @@ import numpy as np
 from gibbs.minimization import PygmoSelfAdaptiveDESettings, OptimizationProblem
 from gibbs.minimization import OptimizationMethod, ScipyDifferentialEvolutionSettings
 
+seed = 123
+
 
 def f_rosenbrock(x):
     """
@@ -28,13 +30,14 @@ def test_pygmo_sade_rosenbrock_minimization(problem_dimension):
     bounds = problem_dimension * [[-6, 6]]
     solver_settings = PygmoSelfAdaptiveDESettings(
         gen=1000,
-        popsize=60
+        popsize=60,
+        seed=seed
     )
 
     problem = OptimizationProblem(
         objective_function=f_rosenbrock,
         bounds=bounds,
-        optimization_method=OptimizationMethod.PYGMO_SADE,
+        optimization_method=OptimizationMethod.PYGMO_DE1220,
         solver_args=solver_settings
     )
 
@@ -47,7 +50,8 @@ def test_pygmo_sade_rosenbrock_minimization(problem_dimension):
 def test_scipy_de_rosenbrock_minimization(problem_dimension):
     bounds = problem_dimension * [[-6, 6]]
     solver_settings = ScipyDifferentialEvolutionSettings(
-        number_of_decision_variables=problem_dimension
+        number_of_decision_variables=problem_dimension,
+        seed=seed
     )
 
     problem = OptimizationProblem(

@@ -12,7 +12,7 @@ class OptimizationMethod(Enum):
     Available optimization solvers.
     """
     SCIPY_DE = 1
-    PYGMO_SADE = 2
+    PYGMO_DE1220 = 2
 
 
 @attr.s(auto_attribs=True)
@@ -111,12 +111,14 @@ class PygmoSelfAdaptiveDESettings:
 
     gen: int
     popsize: int
-    variant: int = 7
+    allowed_variants: list = [2, 6, 7]
     variant_adptv: int = 2
-    ftol: float = 1e-6
-    xtol: float = 1e-6
+    ftol: float = 1e-5
+    xtol: float = 1e-5
     memory: bool = True
     seed: int = int(np.random.randint(0, 2000))
+    polish: bool = True
+    polish_method: str = 'lbfgs'
     parallel_execution: bool = False
     number_of_islands: int = 2
     archipelago_gen: int = 50
@@ -135,6 +137,9 @@ class PygmoOptimizationProblemWrapper:
 
     def get_bounds(self):
         return self._transform_bounds_to_pygmo_standard
+
+    def gradient(self, x):
+        return pg.estimate_gradient(lambda x: self.fitness(x), x)
 
     @property
     def _transform_bounds_to_pygmo_standard(self):
@@ -213,16 +218,16 @@ class OptimizationProblem:
             )
             return result
 
-        elif self.optimization_method == OptimizationMethod.PYGMO_SADE:
+        elif self.optimization_method == OptimizationMethod.PYGMO_DE1220:
             problem_wrapper = PygmoOptimizationProblemWrapper(
                 objective_function=self.objective_function,
                 bounds=self.bounds,
                 args=self.args
             )
             pygmo_algorithm = pg.algorithm(
-                pg.sade(
+                pg.de1220(
                     gen=self.solver_args.gen,
-                    variant=self.solver_args.variant,
+                    # allowed_variants=self.solver_args.allowed_variants,
                     variant_adptv=self.solver_args.variant_adptv,
                     ftol=self.solver_args.ftol,
                     xtol=self.solver_args.xtol,
@@ -239,10 +244,14 @@ class OptimizationProblem:
                     number_of_islands=self.solver_args.number_of_islands,
                     archipelago_gen=self.solver_args.archipelago_gen
                 )
-                return solution_wrapper
             else:
-                solution_wrapper = self._run_pygmo_serial(pygmo_algorithm, pygmo_problem)
-                return solution_wrapper
+                pygmo_solution = self._run_pygmo_serial(pygmo_algorithm, pygmo_problem)
+                if self.solver_args.polish:
+                    pygmo_solution = self._polish_pygmo_population(pygmo_solution)
+
+                solution_wrapper = PygmoSolutionWrapperSerial(pygmo_solution)
+
+            return solution_wrapper
 
         else:
             raise NotImplementedError('Unavailable optimization method.')
@@ -274,4 +283,10 @@ class OptimizationProblem:
             seed=self.solver_args.seed
         )
         solution = algorithm.evolve(population)
-        return PygmoSolutionWrapperSerial(solution)
+        return solution
+
+    def _polish_pygmo_population(self, population):
+        pygmo_nlopt_wrapper = pg.nlopt(self.solver_args.polish_method)
+        nlopt_algorithm = pg.algorithm(pygmo_nlopt_wrapper)
+        solution_wrapper = nlopt_algorithm.evolve(population)
+        return solution_wrapper

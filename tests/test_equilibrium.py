@@ -147,4 +147,4 @@ def test_equilibrium_nichita_ternary_mixture_phase_fractions(mixture_nichita_ter
 
     relative_l2_norm = la.norm(phase_fraction_sorted - expected_F) / la.norm(expected_F)
 
-    assert relative_l2_norm < 1.2e-1
+    assert relative_l2_norm < 1.5e-1
