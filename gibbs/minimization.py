@@ -108,6 +108,7 @@ class ScipyDifferentialEvolutionSettings:
 @attr.s(auto_attribs=True)
 class PygmoSelfAdaptiveDESettings:
     # TODO: docs and validations
+
     gen: int
     popsize: int
     variant: int = 7
