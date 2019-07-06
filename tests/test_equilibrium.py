@@ -115,7 +115,7 @@ def test_equilibrium_whitson_example_18(mixture_whitson, model_whitson):
     expected_F = np.array([0.853401, 1 - 0.853401])
     expected_n_phases = 2
 
-    result = calculate_equilibrium(model_whitson, P, T, z, number_of_trial_phases=expected_n_phases, molar_base=10)
+    result = calculate_equilibrium(model_whitson, P, T, z, number_of_trial_phases=expected_n_phases, molar_base=1)
 
     assert np.sort(result.F) == pytest.approx(np.sort(expected_F), rel=1e-2)
 
