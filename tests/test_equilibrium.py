@@ -7,7 +7,10 @@ from thermo import Chemical
 from gibbs.mixture import Mixture
 from gibbs.models.ceos import PengRobinson78, PengRobinson
 from gibbs.equilibrium import calculate_equilibrium
+from gibbs.minimization import PygmoSelfAdaptiveDESettings
 from gibbs.utilities import convert_F_to_K, convert_psi_to_Pa, convert_bar_to_Pa
+
+seed = 123
 
 
 @attr.s(auto_attribs=True)
@@ -128,7 +131,15 @@ def test_equilibrium_nichita_ternary_mixture_composition(mixture_nichita_ternary
     expected_x1 = np.array([0.036181, 0.340224, 0.623595])
     expected_x2 = np.array([0.038707, 0.004609, 0.956683])
 
-    result = calculate_equilibrium(model_nichita_ternary, P, T, z, number_of_trial_phases=3, compare_trial_phases=False)
+    result = calculate_equilibrium(
+        model_nichita_ternary,
+        P,
+        T,
+        z,
+        number_of_trial_phases=3,
+        compare_trial_phases=False,
+        solver_args=PygmoSelfAdaptiveDESettings(10, 350, seed=seed)
+    )
 
     for expected_composition in [expected_y, expected_x1, expected_x2]:
         expected_norm = la.norm(expected_composition)
@@ -141,7 +152,15 @@ def test_equilibrium_nichita_ternary_mixture_phase_fractions(mixture_nichita_ter
     z = mixture_nichita_ternary.z
     expected_F = np.sort(np.array([0.5645, 0.2962, 0.1393]))
 
-    result = calculate_equilibrium(model_nichita_ternary, P, T, z, number_of_trial_phases=3, compare_trial_phases=False)
+    result = calculate_equilibrium(
+        model_nichita_ternary,
+        P,
+        T,
+        z,
+        number_of_trial_phases=3,
+        compare_trial_phases=False,
+        solver_args=PygmoSelfAdaptiveDESettings(10, 350, seed=seed)
+    )
 
     phase_fraction_sorted = np.sort(result.F)
 
