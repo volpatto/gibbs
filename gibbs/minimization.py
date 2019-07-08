@@ -113,12 +113,12 @@ class PygmoSelfAdaptiveDESettings:
     popsize: int
     allowed_variants: list = [2, 6, 7]
     variant_adptv: int = 2
-    ftol: float = 1e-5
-    xtol: float = 1e-5
+    ftol: float = 1e-6
+    xtol: float = 1e-6
     memory: bool = True
     seed: int = int(np.random.randint(0, 2000))
     polish: bool = True
-    polish_method: str = 'lbfgs'
+    polish_method: str = 'tnewton_precond_restart'
     parallel_execution: bool = False
     number_of_islands: int = 2
     archipelago_gen: int = 50
@@ -139,7 +139,7 @@ class PygmoOptimizationProblemWrapper:
         return self._transform_bounds_to_pygmo_standard
 
     def gradient(self, x):
-        return pg.estimate_gradient(lambda x: self.fitness(x), x)
+        return pg.estimate_gradient_h(lambda x: self.fitness(x), x)
 
     @property
     def _transform_bounds_to_pygmo_standard(self):
@@ -227,7 +227,7 @@ class OptimizationProblem:
             pygmo_algorithm = pg.algorithm(
                 pg.de1220(
                     gen=self.solver_args.gen,
-                    # allowed_variants=self.solver_args.allowed_variants,
+                    allowed_variants=self.solver_args.allowed_variants,
                     variant_adptv=self.solver_args.variant_adptv,
                     ftol=self.solver_args.ftol,
                     xtol=self.solver_args.xtol,
