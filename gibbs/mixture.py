@@ -20,7 +20,7 @@ class Mixture:
 
     @z.validator
     def check_overall_composition(self, attribute, value):
-        tol = 1e-5
+        tol = 1e-4
         if not 1 - tol <= np.sum(value) <= 1 + tol:
             raise ValueError('Overall composition must has summation equal 1.')
 

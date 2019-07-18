@@ -9,7 +9,6 @@ env:
 
 os:
   - linux
-  - osx
 
 before_install:
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then OS=Linux-x86_64; else OS=MacOSX-x86_64; fi
@@ -25,14 +24,14 @@ before_install:
   - export CONDA=$CONDA_BIN/conda
   - $CONDA config --system --set always_yes yes --set changeps1 false
   - $CONDA config --system --append channels conda-forge
-  - $CONDA install -n base conda-devenv
+  - $CONDA install -n base conda-devenv conda=4.6.14
 
 install:
   - $CONDA devenv
   - source $CONDA_BIN/activate gibbs-py$PY_VERSION
 
 script:
-  - pytest --cov-config=.coveragerc --cov-report xml --cov=gibbs
+  - pytest -n auto --cov-config=.coveragerc --cov-report xml --cov=gibbs
   - cd $GIBBS_NOTEBOOKS_DIR; pytest --nbval
 
 after_script:

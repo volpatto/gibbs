@@ -1,9 +1,9 @@
 jobs:
 - job:
-  displayName: Windows vs2017
+  displayName: 'Windows 2019'
 
   pool:
-    vmImage: 'vs2017-win2016'
+    vmImage: 'windows-2019'
   strategy:
     matrix:
       Python36:
@@ -21,16 +21,17 @@ jobs:
   - script: |
       conda config --system --set always_yes yes --set changeps1 no
       conda config --system --append channels conda-forge
-      conda install -n base conda-devenv
+      conda install -n base conda-devenv conda=4.6.14
     displayName: 'Configuring conda'
 
   - script: |
+      conda info -a
       conda devenv
     displayName: 'Running conda devenv'
 
   - script: |
       call activate gibbs-py$(py_version)
-      pytest --cov-config=.coveragerc --junitxml=junit/test-results.xml --cov-report=xml --cov-report=html --cov=gibbs
+      pytest -n auto --cov-config=.coveragerc --junitxml=junit/test-results.xml --cov-report=xml --cov-report=html --cov=gibbs
       cd notebooks
       pytest --nbval
     displayName: 'Tests'

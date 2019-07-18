@@ -23,9 +23,13 @@ dependencies:
   - pytest
   - pytest-lazy-fixture
   - pytest-cov
+  - pytest-xdist
   - codecov
   - hypothesis
   - nbval
+
+  # For documentation
+  - sphinx
 
 environment:
   PYTHONPATH:
