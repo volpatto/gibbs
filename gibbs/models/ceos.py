@@ -7,10 +7,10 @@ R = 8.3144598
 
 
 def check_bip(instance, attribute, value):
-        if value.shape[0] != value.shape[1]:
-            raise ValueError("BIP's must be a 2-dim symmetric array.")
-        if value.shape[0] != len(instance.mixture.Tc):
-            raise ValueError("BIP's have incompatible dimension with input data such as critical temperature.")
+    if value.shape[0] != value.shape[1]:
+        raise ValueError("BIP's must be a 2-dim symmetric array.")
+    if value.shape[0] != len(instance.mixture.Tc):
+        raise ValueError("BIP's have incompatible dimension with input data such as critical temperature.")
 
 
 @attr.s
@@ -24,6 +24,12 @@ class CEOS(object):
     _Z_c = attr.ib(type=float)
     _Omega_a = attr.ib(type=float)
     _Omega_b = attr.ib(type=float)
+    _m = attr.ib(type=np.ndarray, default=None)
+    _b_i = attr.ib(type=np.ndarray, default=None)
+
+    def __attrs_post_init__(self):
+        self._m = self.m
+        self._b_i = self.b_i
 
     @property
     def n_components(self):
@@ -57,7 +63,7 @@ class CEOS(object):
         return self.a_i(T) * P / ((R * T) ** 2.0)
 
     def B_i(self, P, T):
-        return self.b_i * P / (R * T)
+        return self._b_i * P / (R * T)
 
     def A_mix(self, P, T, z):
         return np.dot(z, np.dot(z, self.A_ij(P, T)))
@@ -106,14 +112,11 @@ class PengRobinson(CEOS):
     @property
     def m(self):
         omega = self.mixture.acentric_factor
-        m_low = 0.37464 + 1.54226 * omega - 0.26992 * omega * omega
-        m_high = 0.3796 + 1.485 * omega - 0.1644 * omega * omega \
-            + 0.01667 * omega * omega * omega
-        m_value = np.where(self.mixture.acentric_factor > 0.49, m_high, m_low)
-        return m_value
+        m = 0.37464 + 1.54226 * omega - 0.26992 * omega * omega
+        return m
 
     def alpha(self, T):
-        return (1 + self.m * (1 - np.sqrt(self.Tr(T)))) * (1 + self.m * (1 - np.sqrt(self.Tr(T))))
+        return (1 + self._m * (1 - np.sqrt(self.Tr(T)))) * (1 + self._m * (1 - np.sqrt(self.Tr(T))))
 
     def calculate_Z_factor(self, P, T, z):
         A = self.A_mix(P, T, z)
@@ -193,7 +196,7 @@ class SoaveRedlichKwong(CEOS):
         return m_value
 
     def alpha(self, T):
-        return (1 + self.m * (1 - np.sqrt(self.Tr(T)))) * (1 + self.m * (1 - np.sqrt(self.Tr(T))))
+        return (1 + self._m * (1 - np.sqrt(self.Tr(T)))) * (1 + self._m * (1 - np.sqrt(self.Tr(T))))
 
     def calculate_Z_factor(self, P, T, z):
         A = self.A_mix(P, T, z)
