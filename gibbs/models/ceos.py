@@ -28,6 +28,7 @@ class CEOS(object):
     _b_i = attr.ib(type=np.ndarray, default=None)
 
     def __attrs_post_init__(self):
+        # Used like caches, to prevent several evaluations
         self._m = self.m
         self._b_i = self.b_i
 

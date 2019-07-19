@@ -29,10 +29,12 @@ By now, `gibbs` can perform the following features:
 
 * Classic cubic Equations of State:
   - Soave-Redlich-Kwong;
+  - Peng-Robinson;
   - Peng-Robinson 78.
-* Equation of States for mixtures and pure components;
-* Perform fugacities computations from the PR78, as well as compressibility factor;
-* Reduced TPD stability analysis with DE.
+* Equation of States for both mixtures and pure components;
+* Perform fugacities computations from the cubic EoS, as well as compressibility factor;
+* Reduced TPD stability analysis with DE;
+* Equilibrium calculations: phase component compositions and phase molar fractions.
 
 ## Contributions
 
