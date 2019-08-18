@@ -10,4 +10,6 @@ pr:
 jobs:
 - template: .azure-templates/linux.yml
 
+- template: .azure-templates/osx.yml
+
 - template: .azure-templates/win.yml
