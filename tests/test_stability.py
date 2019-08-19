@@ -5,9 +5,12 @@ from thermo import Chemical
 from pytest_lazyfixture import lazy_fixture
 
 from gibbs.models.ceos import PengRobinson78, SoaveRedlichKwong
+from gibbs.minimization import PygmoSelfAdaptiveDESettings
 from gibbs.mixture import Mixture
 from gibbs.stability_analysis import stability_test
 from gibbs.utilities import convert_bar_to_Pa
+
+seed = 1234
 
 
 @pytest.fixture
@@ -652,7 +655,7 @@ def test_nichita_problem_1(model, expected_phase_split):
     P = convert_bar_to_Pa(40.53)
     T = 190
 
-    result = stability_test(model, P, T, model.mixture.z)
+    result = stability_test(model, P, T, model.mixture.z, solver_args=PygmoSelfAdaptiveDESettings(20, 500, seed=seed))
 
     assert result.phase_split == expected_phase_split
 
@@ -671,7 +674,7 @@ def test_nichita_problem_2(model, pressure, expected_phase_split):
     P = convert_bar_to_Pa(pressure)
     T = 277.6
 
-    result = stability_test(model, P, T, model.mixture.z)
+    result = stability_test(model, P, T, model.mixture.z, solver_args=PygmoSelfAdaptiveDESettings(20, 500, seed=seed))
 
     assert result.phase_split == expected_phase_split
 
@@ -687,7 +690,7 @@ def test_nichita_problem_3(model, expected_phase_split):
     P = convert_bar_to_Pa(76)
     T = 270
 
-    result = stability_test(model, P, T, model.mixture.z)
+    result = stability_test(model, P, T, model.mixture.z, solver_args=PygmoSelfAdaptiveDESettings(20, 500, seed=seed))
 
     assert result.phase_split == expected_phase_split
 
@@ -703,7 +706,7 @@ def test_nichita_problem_4(model, expected_phase_split):
     P = convert_bar_to_Pa(60.8)
     T = 220
 
-    result = stability_test(model, P, T, model.mixture.z)
+    result = stability_test(model, P, T, model.mixture.z, solver_args=PygmoSelfAdaptiveDESettings(20, 500, seed=seed))
 
     assert result.phase_split == expected_phase_split
 
@@ -718,6 +721,6 @@ def test_nichita_problem_5(model, expected_phase_split):
     P = convert_bar_to_Pa(76)
     T = 270
 
-    result = stability_test(model, P, T, model.mixture.z)
+    result = stability_test(model, P, T, model.mixture.z, solver_args=PygmoSelfAdaptiveDESettings(20, 500, seed=seed))
 
     assert result.phase_split == expected_phase_split
