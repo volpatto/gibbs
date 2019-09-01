@@ -4,9 +4,9 @@ import numpy as np
 from thermo import Chemical
 from pytest_lazyfixture import lazy_fixture
 
-from gibbs.cpp_wrapper import Mixture
-from gibbs.cpp_wrapper import PengRobinson78
-from gibbs.cpp_wrapper import PengRobinson as SoaveRedlichKwong
+from gibbs.mixture import Mixture
+from gibbs.models.ceos import PengRobinson78
+from gibbs.models.ceos import SoaveRedlichKwong
 from gibbs.minimization import PygmoSelfAdaptiveDESettings
 from gibbs.stability_analysis import stability_test
 from gibbs.utilities import convert_bar_to_Pa
@@ -649,8 +649,7 @@ def test_stochastic_consistency(sample_model):
     [lazy_fixture('model_problem_1_1'), True],
     [lazy_fixture('model_problem_1_2'), False],
     [lazy_fixture('model_problem_1_3'), True],
-    pytest.param(lazy_fixture('model_problem_1_4'), True, marks=pytest.mark.xfail(reason='Differing result from '
-                                                                                         'paper')),
+    [lazy_fixture('model_problem_1_4'), True],
     [lazy_fixture('model_problem_1_5'), False]
 ])
 def test_nichita_problem_1(model, expected_phase_split):

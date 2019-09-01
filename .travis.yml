@@ -32,9 +32,7 @@ install:
   - mkdir build ; cd build ; cmake ../ ; cmake --build . --target install --config Release; cd ..
 
 script:
-  - pwd
-  - ls
-  - pytest --cov-config=.coveragerc --cov-report xml --cov=gibbs tests/
+  - pytest -n auto --cov-config=.coveragerc --cov-report xml --cov=gibbs
   - cd $GIBBS_NOTEBOOKS_DIR; pytest --nbval
 
 after_script:

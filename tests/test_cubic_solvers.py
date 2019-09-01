@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 
-from gibbs.cpp_wrapper import _cubic_cardano_real_roots, _cubic_cardano_real_positive_roots
+from gibbs._cpp_wrapper import _cubic_cardano_real_roots, _cubic_cardano_real_positive_roots
 
 
 @pytest.mark.parametrize("coeffs", [

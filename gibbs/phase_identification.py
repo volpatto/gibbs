@@ -1,7 +1,7 @@
 import attr
 
-from gibbs.mixture import Mixture
-from gibbs.models.ceos import CEOS, PengRobinson78
+from gibbs._cpp_wrapper import Mixture
+from gibbs._cpp_wrapper import PengRobinson78
 
 
 @attr.s

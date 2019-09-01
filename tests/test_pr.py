@@ -1,7 +1,8 @@
 import pytest
 import numpy as np
 
-from gibbs.cpp_wrapper import Mixture, PengRobinson78, PengRobinson
+from gibbs.models.ceos import PengRobinson78, PengRobinson
+from gibbs.mixture import Mixture
 
 
 @pytest.fixture

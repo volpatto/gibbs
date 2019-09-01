@@ -1,7 +1,7 @@
 import pandas
 
 from gibbs.mixture import Mixture
-from gibbs.models.ceos import CEOS, PengRobinson78
+from gibbs.models.ceos import PengRobinson78
 
 
 def calculate_phase_envelope_grid(mix, eos, P_min, P_max, T_min, T_max, n_points_P=30, n_points_T=30):

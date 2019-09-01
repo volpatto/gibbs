@@ -4,8 +4,8 @@ import numpy.linalg as la
 import attr
 from thermo import Chemical
 
-from gibbs.cpp_wrapper import Mixture
-from gibbs.cpp_wrapper import PengRobinson78, PengRobinson
+from gibbs.mixture import Mixture
+from gibbs.models.ceos import PengRobinson78, PengRobinson
 from gibbs.equilibrium import calculate_equilibrium
 from gibbs.minimization import PygmoSelfAdaptiveDESettings
 from gibbs.utilities import convert_F_to_K, convert_psi_to_Pa, convert_bar_to_Pa
