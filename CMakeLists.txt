@@ -1,7 +1,19 @@
 cmake_minimum_required(VERSION 2.8.12)
+
+# Identifying and locating conda dir
+if (EXISTS $ENV{HOME}/miniconda )
+    set(miniconda "miniconda")
+elseif(EXISTS $ENV{HOME}/miniconda3 )
+    set(miniconda "miniconda3")
+endif ()
+
+set(PYTHON_EXECUTABLE $ENV{HOME}/${miniconda}/envs/gibbs-py36/bin/python)
+set(conda_env_path $ENV{HOME}/${miniconda})
+set(INCLUDE_CONDA ${conda_env_path}/include)
+
 # Better don't use the following set command, but to get the right compilers form conda envs, it's necessary,
 # unfortunately.
-set(CMAKE_CXX_COMPILER $ENV{HOME}/miniconda3/envs/gibbs-py36/bin/g++)
+set(CMAKE_CXX_COMPILER $ENV{HOME}/${miniconda}/envs/gibbs-py36/bin/g++)
 set(CMAKE_CXX_STANDARD 17)
 
 project(eos LANGUAGES CXX C)
@@ -12,12 +24,8 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 add_compile_options("-fPIC")  # Necessary for the linking
 
-set(conda_env_path $ENV{HOME}/miniconda3/envs/gibbs-py36)
-set(PYTHON_EXECUTABLE $ENV{HOME}/miniconda3/envs/gibbs-py36/bin/python)
-set(INCLUDE_CONDA ${conda_env_path}/include)
-
 # Eigen is header-only, so it only needs to include the directory with the headers
-set(Eigen3_INCLUDE_DIR $ENV{HOME}/miniconda3/envs/gibbs-py36/include/eigen3)
+set(Eigen3_INCLUDE_DIR $ENV{HOME}/${miniconda}/envs/gibbs-py36/include/eigen3)
 if( NOT Eigen3_INCLUDE_DIR )
     message(FATAL_ERROR "Please point the environment variable Eigen3_INCLUDE_DIR to the include directory of your
     Eigen3 installation.")
@@ -35,6 +43,7 @@ target_link_libraries(eos)
 include_directories(gibbs/eos_cpp)
 
 message("\n*** Dependencies and infos:")
+message("miniconda: $ENV{HOME}/${miniconda}")
 message("-- cmake project root: ${CMAKE_SOURCE_DIR}")
 message("-- conda path: ${conda_env_path}")
 message("-- conda include path: ${INCLUDE_CONDA}")

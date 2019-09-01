@@ -7,7 +7,6 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     add_compile_options("-fsized-deallocation")
 endif()
 
-#include_directories("${CMAKE_SOURCE_DIR}/petreos/petreos")
 include_directories("${CMAKE_SOURCE_DIR}/gibbs")
 
 # Generate Python module with pybind11
