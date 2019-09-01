@@ -140,6 +140,31 @@ PYBIND11_MODULE(_eos, m) {
             }
     ));
 
+    typedef eos::SoaveRedlichKwong SRK;
+    py::class_<SRK, CEOS, std::shared_ptr<SRK>> cSRK (m, "SoaveRedlichKwong", py::module_local());
+    cSRK.def(
+            py::init<
+                    mixture::Mixture,  // mixture
+                    ArrayXXd  // bip
+            >(),
+            py::arg("mixture"),
+            py::arg("bip"));
+    cSRK.def(py::pickle(
+            [](const SRK &p) { // __getstate__
+                /* Return a tuple that fully encodes the state of the object */
+                return py::make_tuple(p.get_mixture(), p.get_bip());
+            },
+            [](py::tuple t) { // __setstate__
+                if (t.size() != 2)
+                    throw std::runtime_error("Invalid state!");
+
+                /* Create a new C++ instance */
+                SRK p(t[0].cast<Mix>(), t[1].cast<ArrayXXd>());
+
+                return p;
+            }
+    ));
+
     typedef eos::PengRobinson78 PR78;
     py::class_<PR78, PR, std::shared_ptr<PR78>> cPR78 (m, "PengRobinson78", py::module_local());
     cPR78.def(

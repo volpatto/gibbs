@@ -14,7 +14,7 @@ class StabilityResult:
 
 def stability_test(
     model, P, T, z, optimization_method=OptimizationMethod.PYGMO_DE1220,
-    solver_args=PygmoSelfAdaptiveDESettings(100, 50), rtol=1e-3
+    solver_args=PygmoSelfAdaptiveDESettings(30, 1000), rtol=1e-3
 ):
 
     if rtol < 0:

@@ -116,7 +116,6 @@ namespace eos {
     ArrayXd CubicEos::calculate_fugacity(const double &P, const double &T, const ArrayXd &z, const double &Z_factor) const {
         return z * P * this->calculate_fugacity_coefficients(P, T, z, Z_factor);
     }
-
 }
 
 /*
@@ -199,4 +198,60 @@ namespace eos {
 
         return Map<ArrayXd>(m_vector.data(), m_vector.size());
     }
+}
+
+/*
+ * Soave-Redlich-Kwong member functions definitions.
+ * */
+namespace eos{
+
+    ArrayXd SoaveRedlichKwong::m() const {
+        ArrayXd omega = this->mixture.omega();
+        return (0.480 + 1.574 * omega - 0.176 * omega * omega);
+    }
+
+    ArrayXd SoaveRedlichKwong::alpha(const double &T) const {
+        return ((1 + this->m() * (1 - this->Tr(T).sqrt())) * (1 + this->m() * (1 - this->Tr(T).sqrt())));
+    }
+
+    Vector4d SoaveRedlichKwong::calculate_Z_cubic_polynomial_coeffs(const double &P, const double &T, const ArrayXd
+    &z) const {
+        double A = this->calculate_A_mix(P, T, z);
+        double B = this->calculate_B_mix(P, T, z);
+
+        // Obtaining the roots
+        Vector4d coefficients;
+        coefficients(0) = -A * B;
+        coefficients(1) = A - B - B * B;
+        coefficients(2) = -1;
+        coefficients(3) = 1;
+
+        return coefficients;
+    }
+
+    ArrayXd SoaveRedlichKwong::calculate_fugacity_coefficients(const double &P, const double &T, const ArrayXd &z,
+                                                               const double &Z_factor) const {
+        // Avoiding multiple function calls
+        double A = this->calculate_A_mix(P, T, z);
+        double B = this->calculate_B_mix(P, T, z);
+        ArrayXd Bi_B = this->calculate_B(P, T) / B;
+        ArrayXXd A_ij = this->calculate_A_ij(P, T);
+
+        auto N = this->n_components();
+        ArrayXd ln_phi(N);
+        for (int i = 0; i < N; ++i) {
+            // Computing fugacity coefficients by parts
+            auto first_term = (Bi_B(i) * (Z_factor - 1.0));
+            auto second_term = std::log(Z_factor - B);
+            auto z_dot_A_ij = 0.0;
+            for (int j = 0; j < N; ++j)
+                z_dot_A_ij += z(j) * A_ij(i, j);
+            auto third_term = A / B * (Bi_B(i) - 2.0 / A * z_dot_A_ij);
+            auto fourth_term = std::log((1 + B / Z_factor));
+            ln_phi(i) = first_term - second_term + third_term * fourth_term;
+        }
+
+        return ln_phi.exp();
+    }
+
 }

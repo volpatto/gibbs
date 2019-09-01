@@ -136,6 +136,36 @@ namespace eos {
 
     };
 
+    class SoaveRedlichKwong : public CubicEos {
+
+    public:
+
+        explicit SoaveRedlichKwong(
+                const Mixture &mixture,
+                const ArrayXXd &bip
+        )
+                : CubicEos(mixture, bip, Z_c, Omega_a, Omega_b) {};
+
+        ~SoaveRedlichKwong() override = default;
+
+        [[nodiscard]] ArrayXd m() const override;
+
+        [[nodiscard]] ArrayXd alpha(const double &T) const override;
+
+        [[nodiscard]] Vector4d calculate_Z_cubic_polynomial_coeffs(const double &P, const double &T, const ArrayXd &z) const override;
+
+        [[nodiscard]] ArrayXd calculate_fugacity_coefficients(const double &P, const double &T, const ArrayXd &z, const double
+        &Z_factor) const override ;
+
+    protected:
+
+        // Parameter values for SRK EoS
+        static constexpr double Z_c = 1. / 3.;
+        static constexpr double Omega_a = 0.42748;
+        static constexpr double Omega_b = 0.08664;
+
+    };
+
 }
 
 #endif //EOS_CEOS_HPP

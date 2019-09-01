@@ -4,8 +4,6 @@ import numpy.linalg as la
 import attr
 from thermo import Chemical
 
-# from gibbs.mixture import Mixture
-# from gibbs.models.ceos import PengRobinson78, PengRobinson
 from gibbs.cpp_wrapper import Mixture
 from gibbs.cpp_wrapper import PengRobinson78, PengRobinson
 from gibbs.equilibrium import calculate_equilibrium
