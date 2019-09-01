@@ -35,7 +35,7 @@ include_directories("${Eigen3_INCLUDE_DIR}")
 find_package(pybind11 REQUIRED)
 #find_package(Boost REQUIRED)
 
-set(ARTIFACTS_PATH ${CMAKE_SOURCE_DIR}/gibbs/cpp_binding)
+set(ARTIFACTS_PATH ${CMAKE_SOURCE_DIR}/gibbs/_cpp_binding)
 
 add_subdirectory(gibbs)
 target_link_libraries(eos)
