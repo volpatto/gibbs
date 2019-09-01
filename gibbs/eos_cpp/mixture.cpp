@@ -21,4 +21,20 @@ namespace mixture {
         return this->_omega;
     }
 
+    void Mixture::set_z(const ArrayXd &z) {
+        this->_z = z;
+    }
+
+    void Mixture::set_Tc(const ArrayXd &Tc) {
+        this->_Tc = Tc;
+    }
+
+    void Mixture::set_Pc(const ArrayXd &Pc) {
+        this->_Pc = Pc;
+    }
+
+    void Mixture::set_omega(const ArrayXd &omega) {
+        this->_omega = omega;
+    }
+
 }

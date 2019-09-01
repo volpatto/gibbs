@@ -11,17 +11,17 @@
 using namespace Eigen;
 namespace py = pybind11;
 
-PYBIND11_MODULE(_petreos, m) {
-    m.doc() = "Petreos C++ bindings"; // optional module docstring
+PYBIND11_MODULE(_eos, m) {
+    m.doc() = "EoS C++ bindings"; // optional module docstring
 
     typedef mixture::Mixture Mix;
     py::class_<Mix, std::shared_ptr<Mix>> cMix (m, "Mixture", py::module_local());
     cMix.def(
             py::init<
-                    ArrayXd,  // z
-                    ArrayXd,  // Tc
-                    ArrayXd,  // Pc
-                    ArrayXd  // omega
+                    const ArrayXd &,  // z
+                    const ArrayXd &,  // Tc
+                    const ArrayXd &,  // Pc
+                    const ArrayXd &  // omega
                     >(),
             py::arg("z"),
             py::arg("Tc"),
@@ -29,10 +29,10 @@ PYBIND11_MODULE(_petreos, m) {
             py::arg("omega")
     );
 
-    cMix.def("z", &mixture::Mixture::z);
-    cMix.def("Pc", &mixture::Mixture::Pc);
-    cMix.def("Tc", &mixture::Mixture::Tc);
-    cMix.def("omega", &mixture::Mixture::omega);
+    cMix.def_property("z", &mixture::Mixture::z, &mixture::Mixture::set_z);
+    cMix.def_property("Pc", &mixture::Mixture::Pc, &mixture::Mixture::set_Pc);
+    cMix.def_property("Tc", &mixture::Mixture::Tc, &mixture::Mixture::set_Tc);
+    cMix.def_property("omega", &mixture::Mixture::omega, &mixture::Mixture::set_omega);
     cMix.def(py::pickle(
             [](const Mix &p) { // __getstate__
                 /* Return a tuple that fully encodes the state of the object */

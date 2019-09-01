@@ -112,7 +112,7 @@ class PengRobinson(CEOS):
 
     @property
     def m(self):
-        omega = self.mixture.acentric_factor
+        omega = self.mixture.omega
         m = 0.37464 + 1.54226 * omega - 0.26992 * omega * omega
         return m
 
@@ -172,11 +172,11 @@ class PengRobinson78(PengRobinson):
 
     @property
     def m(self):
-        omega = self.mixture.acentric_factor
+        omega = self.mixture.omega
         m_low = 0.37464 + 1.54226 * omega - 0.26992 * omega * omega
         m_high = 0.3796 + 1.485 * omega - 0.1644 * omega * omega \
             + 0.01667 * omega * omega * omega
-        m_value = np.where(self.mixture.acentric_factor > 0.49, m_high, m_low)
+        m_value = np.where(self.mixture.omega > 0.49, m_high, m_low)
         return m_value
 
 
@@ -192,7 +192,7 @@ class SoaveRedlichKwong(CEOS):
 
     @property
     def m(self):
-        omega = self.mixture.acentric_factor
+        omega = self.mixture.omega
         m_value = 0.480 + 1.574 * omega - 0.176 * omega * omega
         return m_value
 

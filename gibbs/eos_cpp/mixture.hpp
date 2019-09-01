@@ -47,6 +47,14 @@ namespace mixture {
 
         ArrayXd omega() const;
 
+        void set_z(const ArrayXd &z);
+
+        void set_Tc(const ArrayXd &Tc);
+
+        void set_Pc(const ArrayXd &Pc);
+
+        void set_omega(const ArrayXd &omega);
+
     private:
 
         inline void check_overall_composition() const {
