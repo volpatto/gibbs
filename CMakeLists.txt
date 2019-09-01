@@ -29,15 +29,6 @@ add_subdirectory(gibbs)
 target_link_libraries(eos)
 
 include_directories(gibbs/eos_cpp)
-#add_executable(exec
-#        petreos/bindings/_petreos.cpp
-#        petreos/petreos/ceos.cpp
-#        petreos/petreos/ceos.hpp
-#        petreos/petreos/constants.hpp
-#        petreos/petreos/mixture.cpp
-#        petreos/petreos/mixture.hpp
-#        petreos/petreos/solvers.cpp
-#        petreos/petreos/solvers.hpp)
 
 message("\n*** Dependencies and infos:")
 message("-- cmake project root: ${CMAKE_SOURCE_DIR}")
