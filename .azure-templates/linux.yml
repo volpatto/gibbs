@@ -29,7 +29,7 @@ jobs:
     displayName: 'Running conda devenv'
 
   - script: |
-      mkdir build ; cd build ; cmake ../ ; cmake --build . --target install --config Release
+      mkdir build ; cd build ; cmake ../ ; cmake --build . --target install --config Release; cd ..
     displayName: 'Build and Install'
 
   - script: |

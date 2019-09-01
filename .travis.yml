@@ -29,7 +29,7 @@ before_install:
 install:
   - $CONDA devenv
   - source $CONDA_BIN/activate gibbs-py$PY_VERSION
-  - mkdir build ; cd build ; cmake ../ ; cmake --build . --target install --config Release
+  - mkdir build ; cd build ; cmake ../ ; cmake --build . --target install --config Release; cd ..
 
 script:
   - pwd
