@@ -84,30 +84,13 @@ namespace eos {
     ArrayXd CubicEos::calculate_Z_factor(const double &P, const double &T, const ArrayXd &z) const {
         Vector4d coefficients = this->calculate_Z_cubic_polynomial_coeffs(P, T, z);
 
-        auto result_roots = eos::solvers::cubic_polynomial_real_positive_roots(coefficients);
-
+        auto result_roots = eos::solvers::cubic_cardano_real_positive_roots(coefficients);
         Array2d empty_array;
-        if (std::holds_alternative<ArrayXd>(result_roots)) {
-            auto Z_roots_full = std::get<ArrayXd>(result_roots);
-            if (Z_roots_full.size() < 1)
-                return empty_array;
 
-            auto smallest_root = Z_roots_full.minCoeff();
-            auto greatest_root = Z_roots_full.maxCoeff();
-            auto Z_positive_roots = eos::solvers::select_polynomial_real_positive_roots(
-                    smallest_root,
-                    greatest_root);
-
-            if (std::holds_alternative<ArrayXd>(Z_positive_roots)) {
-                return std::get<ArrayXd>(Z_positive_roots);
-            }
-
-            return empty_array;
-
-        }
+        if (std::holds_alternative<ArrayXd>(result_roots))
+            return std::get<ArrayXd>(result_roots);
 
         return empty_array;
-
     }
 
     std::variant<double, std::nullopt_t> CubicEos::calculate_Z_minimal_energy(const double &P, const double &T, const ArrayXd &z) const {

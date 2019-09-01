@@ -50,11 +50,14 @@ PYBIND11_MODULE(_eos, m) {
             ));
 
     m.def(
-            "_cubic_polynomial_real_positive_roots",
-            &eos::solvers::cubic_polynomial_real_positive_roots,
+            "_cubic_cardano_real_positive_roots",
+            &eos::solvers::cubic_cardano_real_positive_roots,
             py::arg("coefficients"));
 
-    m.def("_cubic_polynomial_roots", &eos::solvers::cubic_polynomial_roots, py::arg("coefficients"));
+    m.def(
+            "_cubic_cardano_real_roots",
+            &eos::solvers::cubic_cardano_real_roots,
+            py::arg("coefficients"));
 
     typedef eos::CubicEos CEOS;
     py::class_<CEOS, std::shared_ptr<CEOS>> cCEOS (m, "CubicEos");
