@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 2.8.12)
-project(eos LANGUAGES CXX C)
+# Better don't use the following set command, but to get the right compilers form conda envs, it's necessary,
+# unfortunately.
+set(CMAKE_CXX_COMPILER $ENV{HOME}/miniconda3/envs/gibbs-py36/bin/g++)
 set(CMAKE_CXX_STANDARD 17)
+
+project(eos LANGUAGES CXX C)
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
