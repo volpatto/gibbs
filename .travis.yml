@@ -9,6 +9,7 @@ env:
 
 os:
   - linux
+  - osx
 
 before_install:
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then OS=Linux-x86_64; else OS=MacOSX-x86_64; fi
