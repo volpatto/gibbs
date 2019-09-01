@@ -43,7 +43,7 @@ target_link_libraries(eos)
 include_directories(gibbs/eos_cpp)
 
 message("\n*** Dependencies and infos:")
-message("miniconda: $ENV{HOME}/${miniconda}")
+message("-- miniconda: $ENV{HOME}/${miniconda}")
 message("-- cmake project root: ${CMAKE_SOURCE_DIR}")
 message("-- conda path: ${conda_env_path}")
 message("-- conda include path: ${INCLUDE_CONDA}")
