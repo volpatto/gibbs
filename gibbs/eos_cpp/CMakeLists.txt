@@ -1,0 +1,13 @@
+project(lib)
+include_directories("${CMAKE_SOURCE_DIR}/gibbs")
+add_library(
+        eos
+        STATIC
+            ceos.cpp
+            ceos.hpp
+            mixture.cpp
+            mixture.hpp
+            constants.hpp
+            solvers.cpp
+            solvers.hpp
+)
