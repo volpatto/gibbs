@@ -1,4 +1,4 @@
-import gibbs.cpp_binding._eos as eos_cpp
+import gibbs._cpp_binding._eos as eos_cpp
 
 Mixture = eos_cpp.Mixture
 PengRobinson = eos_cpp.PengRobinson
