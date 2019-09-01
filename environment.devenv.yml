@@ -8,7 +8,6 @@ dependencies:
   - make
   - eigen
   - cxx-compiler
-  - binutils
 
   # For the bindings
   - pybind11
