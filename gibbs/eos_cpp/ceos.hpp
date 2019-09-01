@@ -1,5 +1,6 @@
 #ifndef EOS_CEOS_HPP
 #define EOS_CEOS_HPP
+#include <utility>
 #include <variant>
 #include <optional>
 #include <Eigen/Dense>
@@ -24,60 +25,60 @@ namespace eos {
 
         explicit CubicEos(
                 const Mixture &mixture,
-                const ArrayXXd &bip,
+                ArrayXXd bip,
                 const double &Z_c,
                 const double &Omega_a,
                 const double &Omega_b)
                 : mixture(mixture),
-                bip(bip),
+                bip(std::move(bip)),
                 _Z_c(Z_c),
                 _Omega_a(Omega_a),
                 _Omega_b(Omega_b){};
 
         virtual ~CubicEos() = default;
 
-        inline int n_components() const {
+        [[nodiscard]] inline int n_components() const {
             return this->mixture.Pc().size();
         };
 
-        Mixture get_mixture() const;
+        [[nodiscard]] Mixture get_mixture() const;
 
-        ArrayXXd get_bip() const;
+        [[nodiscard]] ArrayXXd get_bip() const;
 
-        ArrayXd Tr(const double &T) const;
+        [[nodiscard]] ArrayXd Tr(const double &T) const;
 
-        ArrayXd Pr(const double &P) const;
+        [[nodiscard]] ArrayXd Pr(const double &P) const;
 
-        virtual ArrayXd m() const = 0;
+        [[nodiscard]] virtual ArrayXd m() const = 0;
 
-        virtual ArrayXd alpha(const double &T) const = 0;
+        [[nodiscard]] virtual ArrayXd alpha(const double &T) const = 0;
 
-        ArrayXd calculate_a(const double &T) const;
+        [[nodiscard]] ArrayXd calculate_a(const double &T) const;
 
-        ArrayXd calculate_b() const;
+        [[nodiscard]] ArrayXd calculate_b() const;
 
-        ArrayXd calculate_A(const double &P, const double &T) const;
+        [[nodiscard]] ArrayXd calculate_A(const double &P, const double &T) const;
 
-        ArrayXd calculate_B(const double &P, const double &T) const;
+        [[nodiscard]] ArrayXd calculate_B(const double &P, const double &T) const;
 
-        ArrayXXd calculate_A_ij(const double &P, const double &T) const;
+        [[nodiscard]] ArrayXXd calculate_A_ij(const double &P, const double &T) const;
 
-        double calculate_A_mix(const double &P, const double &T, const ArrayXd &z) const;
+        [[nodiscard]] double calculate_A_mix(const double &P, const double &T, const ArrayXd &z) const;
 
-        double calculate_B_mix(const double &P, const double &T, const ArrayXd &z) const;
+        [[nodiscard]] double calculate_B_mix(const double &P, const double &T, const ArrayXd &z) const;
 
-        virtual Vector4d calculate_Z_cubic_polynomial_coeffs(const double &P, const double &T, const ArrayXd &z)
+        [[nodiscard]] virtual Vector4d calculate_Z_cubic_polynomial_coeffs(const double &P, const double &T, const ArrayXd &z)
         const = 0;
 
-        ArrayXd calculate_Z_factor(const double &P, const double &T, const ArrayXd &z) const;
+        [[nodiscard]] ArrayXd calculate_Z_factor(const double &P, const double &T, const ArrayXd &z) const;
 
-        std::variant<double, std::nullopt_t> calculate_Z_minimal_energy(const double &P, const double &T, const ArrayXd &z)
+        [[nodiscard]] std::variant<double, std::nullopt_t> calculate_Z_minimal_energy(const double &P, const double &T, const ArrayXd &z)
         const;
 
-        virtual ArrayXd calculate_fugacity_coefficients(const double &P, const double &T, const ArrayXd &z, const double
+        [[nodiscard]] virtual ArrayXd calculate_fugacity_coefficients(const double &P, const double &T, const ArrayXd &z, const double
         &Z_factor) const = 0;
 
-        ArrayXd calculate_fugacity(const double &P, const double &T, const ArrayXd &z, const double
+        [[nodiscard]] ArrayXd calculate_fugacity(const double &P, const double &T, const ArrayXd &z, const double
         &Z_factor) const;
 
     protected:
@@ -99,15 +100,15 @@ namespace eos {
                 )
                 : CubicEos(mixture, bip, Z_c, Omega_a, Omega_b) {};
 
-        ~PengRobinson() = default;
+        ~PengRobinson() override = default;
 
-        ArrayXd m() const override;
+        [[nodiscard]] ArrayXd m() const override;
 
-        ArrayXd alpha(const double &T) const override;
+        [[nodiscard]] ArrayXd alpha(const double &T) const override;
 
-        Vector4d calculate_Z_cubic_polynomial_coeffs(const double &P, const double &T, const ArrayXd &z) const override;
+        [[nodiscard]] Vector4d calculate_Z_cubic_polynomial_coeffs(const double &P, const double &T, const ArrayXd &z) const override;
 
-        ArrayXd calculate_fugacity_coefficients(const double &P, const double &T, const ArrayXd &z, const double
+        [[nodiscard]] ArrayXd calculate_fugacity_coefficients(const double &P, const double &T, const ArrayXd &z, const double
         &Z_factor) const override ;
 
     protected:
@@ -129,12 +130,12 @@ namespace eos {
         )
                 : PengRobinson(mixture, bip) {};
 
-        ~PengRobinson78() = default;
+        ~PengRobinson78() override = default;
 
-        ArrayXd m() const override;
+        [[nodiscard]] ArrayXd m() const override;
 
     };
 
 }
 
-#endif //PETREOS_CEOS_HPP
+#endif //EOS_CEOS_HPP

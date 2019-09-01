@@ -3,6 +3,7 @@
 
 #include <stdexcept>
 #include <Eigen/Dense>
+#include <utility>
 
 #include "eos_cpp/constants.hpp"
 
@@ -24,11 +25,11 @@ namespace mixture {
         Mixture() = delete;
 
         explicit Mixture(
-                const ArrayXd &z,
-                const ArrayXd &Tc,
-                const ArrayXd &Pc,
-                const ArrayXd &omega
-                ) : _z(z), _Tc(Tc), _Pc(Pc), _omega(omega) {
+                ArrayXd z,
+                ArrayXd Tc,
+                ArrayXd Pc,
+                ArrayXd omega
+                ) : _z(std::move(z)), _Tc(std::move(Tc)), _Pc(std::move(Pc)), _omega(std::move(omega)) {
 
             check_overall_composition();
             validate_Pc();
@@ -39,13 +40,13 @@ namespace mixture {
 
         ~Mixture() = default;
 
-        ArrayXd z() const;
+        [[nodiscard]] ArrayXd z() const;
 
-        ArrayXd Tc() const;
+        [[nodiscard]] ArrayXd Tc() const;
 
-        ArrayXd Pc() const;
+        [[nodiscard]] ArrayXd Pc() const;
 
-        ArrayXd omega() const;
+        [[nodiscard]] ArrayXd omega() const;
 
         void set_z(const ArrayXd &z);
 
@@ -98,4 +99,4 @@ namespace mixture {
 
 }
 
-#endif //PETREOS_MIXTURE_HPP
+#endif //EOS_MIXTURE_HPP
