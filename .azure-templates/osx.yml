@@ -23,7 +23,7 @@ jobs:
   - script: |
       conda config --system --set always_yes yes --set changeps1 no
       conda config --system --append channels conda-forge
-      conda install -n base conda-devenv conda
+      conda install -n base conda-devenv
     displayName: 'Configuring conda'
 
   - script: |
