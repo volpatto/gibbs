@@ -20,6 +20,7 @@ install:
   - cmd: conda install -n base conda-devenv
   - cmd: conda devenv
   - cmd: activate gibbs-py36
+  - cmd: mkdir build ; cd build ; cmake ../ ; cmake --build . --target install --config Release; cd ..
 test_script:
   - cmd: pytest -n auto
   - cmd: cd notebooks

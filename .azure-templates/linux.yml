@@ -29,6 +29,10 @@ jobs:
     displayName: 'Running conda devenv'
 
   - script: |
+      mkdir build ; cd build ; cmake ../ ; cmake --build . --target install --config Release; cd ..
+    displayName: 'Build and Install'
+
+  - script: |
       source activate gibbs-py$(py_version)
       pytest -n auto --cov-config=.coveragerc --junitxml=junit/test-results.xml --cov-report=xml --cov-report=html --cov=gibbs
       cd notebooks

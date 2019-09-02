@@ -1,7 +1,19 @@
 {% set CONDA_PY = os.environ.get('CONDA_PY', '36') %}
 name: gibbs-py{{ CONDA_PY }}
-
+channels:
+  - conda-forge
 dependencies:
+  # Cpp stack
+  - clangdev >=6.0
+  - cmake < 3.15
+  - make
+  - eigen
+  - cxx-compiler
+
+  # For the bindings
+  - pybind11
+
+  # Python stack
   - python=3.6
   - attrs
   - numpy

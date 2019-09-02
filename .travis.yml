@@ -9,6 +9,7 @@ env:
 
 os:
   - linux
+  - osx
 
 before_install:
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then OS=Linux-x86_64; else OS=MacOSX-x86_64; fi
@@ -29,6 +30,7 @@ before_install:
 install:
   - $CONDA devenv
   - source $CONDA_BIN/activate gibbs-py$PY_VERSION
+  - mkdir build ; cd build ; cmake ../ ; cmake --build . --target install --config Release; cd ..
 
 script:
   - pytest -n auto --cov-config=.coveragerc --cov-report xml --cov=gibbs
