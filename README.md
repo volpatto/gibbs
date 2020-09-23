@@ -5,6 +5,8 @@
 [![Build Status](https://dev.azure.com/volpatto/volpatto/_apis/build/status/gibbs?branchName=master)](https://dev.azure.com/volpatto/volpatto/_build/latest?definitionId=2&branchName=master)
 [![codecov](https://codecov.io/gh/volpatto/gibbs/branch/master/graph/badge.svg)](https://codecov.io/gh/volpatto/gibbs)
 
+**READ HERE FIRST: I don't have available time for further developments or improvements to `gibbs` lib at the moment. If you have interest in contributions, feel free to submit Pull Requests. Any question please feel free to text me, see the Contact section below. Sorry for the trouble!**
+
 An open source python library for equilibrium calculation based on global minimization of Gibbs free energy.
 
 ## What you will find here? 
