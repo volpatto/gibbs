@@ -1,6 +1,5 @@
 # gibbs
 
-[![Build Status](https://travis-ci.com/volpatto/gibbs.svg?branch=master)](https://travis-ci.com/volpatto/gibbs)
 [![Build status](https://ci.appveyor.com/api/projects/status/gkl9lve28byp60jr/branch/master?svg=true)](https://ci.appveyor.com/project/volpatto/gibbs/branch/master)
 [![Build Status](https://dev.azure.com/volpatto/volpatto/_apis/build/status/gibbs?branchName=master)](https://dev.azure.com/volpatto/volpatto/_build/latest?definitionId=2&branchName=master)
 [![codecov](https://codecov.io/gh/volpatto/gibbs/branch/master/graph/badge.svg)](https://codecov.io/gh/volpatto/gibbs)
